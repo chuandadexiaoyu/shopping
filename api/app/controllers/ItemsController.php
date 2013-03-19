@@ -55,11 +55,11 @@ class ItemsController extends BaseController {
 		//
 	}
 
-	// public function vendors($id)
-	// {
-	// 	var_dump( Item::find($id)->vendors());
-	// 	// return Item::find($id)->vendors();
-	// }
+	public function vendors($id)
+	{
+//		var_dump( Item::find($id)->vendors());
+		 return Item::find($id)->vendors()->get();
+	}
 
 	// public function carts()
 	// {
