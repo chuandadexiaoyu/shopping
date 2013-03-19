@@ -79,17 +79,18 @@ class RoutesCommand extends Command {
      */
     protected function setRoutesInfo()
     {
-        $this->routesInfo = [];
+        $this->routesInfo = array();
 
         // Let's filter through the registered routes
         // and extract our desired info.
         foreach($this->routes as $route => $info)
         {
-            $this->routesInfo[] = [
-                'uri' => $info->getMethods()[0] . ' ' . $info->getPath(),
+            $uri = $info->getMethods();
+            $this->routesInfo[] = array(
+                'uri' => $uri[0] . ' ' . $info->getPath(),
                 'name' => $this->getNamedRoute($route),
                 'action' => $this->getAction($info)
-            ];
+            );
         }
     }
 
@@ -130,13 +131,13 @@ class RoutesCommand extends Command {
      */
     protected function getCellWidths($padding = 10)
     {
-        $widths = [];
+        $widths = array();
 
-        $cols = [
+        $cols = array(
             'uris' => array_pluck($this->routesInfo, 'uri'),
             'actions' => array_pluck($this->routesInfo, 'action'),
             'names' => array_pluck($this->routesInfo, 'name')
-        ];
+        );
 
         foreach($cols as $key => $col)
         {
@@ -178,9 +179,11 @@ class RoutesCommand extends Command {
     */
     protected function getAction($info)
     {
-        return isset($info->getOptions()['_uses'])
-        ? $info->getOptions()['_uses']
-        : 'Closure';
+        $options = $info->getOptions();
+        if (isset($options['_uses']))
+            return $options['_uses'];
+        else
+            return 'Closure';
     }
 
 }

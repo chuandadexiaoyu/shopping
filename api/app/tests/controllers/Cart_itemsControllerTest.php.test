@@ -1,15 +1,15 @@
 <?php
 
-class VendorsControllerTest extends TestCase {
+class Cart_itemsControllerTest extends TestCase {
 	public function testIndex()
 	{
-		$response = $this->call('GET', 'vendors');
+		$response = $this->call('GET', 'cart_items');
 		$this->assertTrue($response->isOk());
 	}
 
 	public function testShow()
 	{
-		$response = $this->call('GET', 'vendors/1');
+		$response = $this->call('GET', 'cart_items/1');
 		$this->assertTrue($response->isOk());
 	}
 

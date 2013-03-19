@@ -13,16 +13,6 @@ class ItemsController extends BaseController {
 	}
 
 	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
@@ -41,17 +31,6 @@ class ItemsController extends BaseController {
 	public function show($id)
 	{
 		return Item::find($id);
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
 	}
 
 	/**
@@ -76,14 +55,15 @@ class ItemsController extends BaseController {
 		//
 	}
 
-	public function vendors()
-	{
-		return $this->belongsToMany('Vendor');
-	}
+	// public function vendors($id)
+	// {
+	// 	var_dump( Item::find($id)->vendors());
+	// 	// return Item::find($id)->vendors();
+	// }
 
-	public function carts()
-	{
-		return $this->belongsToMany('Cart');
-	}
+	// public function carts()
+	// {
+	// 	return $this->belongsToMany('Cart');
+	// }
 
 }

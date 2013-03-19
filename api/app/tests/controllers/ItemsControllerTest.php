@@ -13,15 +13,4 @@ class ItemsControllerTest extends TestCase {
 		$this->assertTrue($response->isOk());
 	}
 
-	public function testCreate()
-	{
-		$response = $this->call('GET', 'items/create');
-		$this->assertTrue($response->isOk());
-	}
-
-	public function testEdit()
-	{
-		$response = $this->call('GET', 'items/1/edit');
-		$this->assertTrue($response->isOk());
-	}
 }

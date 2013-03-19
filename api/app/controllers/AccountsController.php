@@ -1,6 +1,7 @@
 <?php
 
-class AccountsController extends BaseController {
+class AccountsController extends BaseController 
+{
 
 	/**
 	 * Display a listing of the resource.
@@ -10,16 +11,6 @@ class AccountsController extends BaseController {
 	public function index()
 	{
 		return Account::all();
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
 	}
 
 	/**
@@ -41,17 +32,6 @@ class AccountsController extends BaseController {
 	public function show($id)
 	{
 		return Account::find($id);
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
 	}
 
 	/**

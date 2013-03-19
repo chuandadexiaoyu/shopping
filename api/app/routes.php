@@ -15,18 +15,14 @@ Route::get('/', array('as'=>'home', 'uses'=>'UsersController@getLogin'));
 Route::get('/user/login', array('as'=>'login', 'uses'=>'UsersController@getLogin'));
 Route::get('/user/logout', array('as'=>'logout', 'uses'=>'UsersController@getLogout'));
 
+Route::get('/items/{item}/vendors', array('uses'=>'ItemsController@vendors'));
+
 Route::post('/user/login', array('before'=>'csrf', 'uses'=>'UsersController@postLogin'));
 
 Route::resource('users', 'UsersController');
-
 Route::resource('carts', 'CartsController');
-
 Route::resource('accounts', 'AccountsController');
-
 Route::resource('items', 'ItemsController');
-
 Route::resource('vendors', 'VendorsController');
-
-Route::resource('item_vendors', 'Item_vendorsController');
-
+Route::resource('item_vendors', 'ItemVendorsController');
 Route::resource('cart_items', 'Cart_itemsController');
