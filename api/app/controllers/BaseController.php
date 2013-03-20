@@ -1,18 +1,27 @@
 <?php
 
-class BaseController extends Controller {
+class BaseController extends Controller 
+{
 
-	/**
-	 * Setup the layout used by the controller.
-	 *
-	 * @return void
-	 */
-	protected function setupLayout()
-	{
-		if ( ! is_null($this->layout))
-		{
-			$this->layout = View::make($this->layout);
-		}
-	}
+    /**
+     * Returns a Not Found error (via json)
+     * 
+     * Return codes are available at:
+     * <project>\api\vendor\symfony\http-foundation
+     *     \Symfony\Component\HttpFoundation\Response.php
+     */
+    protected static function notFound()
+    {
+        return Response::json()->setStatusCode(404);
+    }
 
+    protected static function badRequest($errorString)
+    {
+        // if(!$errorString)
+        //     return Response::json()->setStatusCode(400);
+        // else
+//            return Response::json($errorString)->setStatusCode(400);
+        return Response::json($errorString)->setStatusCode(400);
+    }    
+ 
 }

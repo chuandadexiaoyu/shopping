@@ -9,6 +9,8 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      */
     public function createApplication()
     {
+        $this->runFailingTests = False;
+
     	$unitTesting = true;
 
         $testEnvironment = 'testing';

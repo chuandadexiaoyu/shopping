@@ -122,6 +122,15 @@ class CartItemsTableSeeder extends Seeder {
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
             ),
+            array(
+                'cart_id' => 7,
+                'item_id' => 10,
+                'acct_id' => 58250,
+                'quantity'=> 10,
+                'price_approx' => 15,
+                'created_at' => new DateTime,
+                'updated_at' => new DateTime,
+            ),
 		);
 
 		DB::table('cart_items')->insert($cart_items);

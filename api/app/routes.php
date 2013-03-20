@@ -16,6 +16,7 @@ Route::get('/user/login', array('as'=>'login', 'uses'=>'UsersController@getLogin
 Route::get('/user/logout', array('as'=>'logout', 'uses'=>'UsersController@getLogout'));
 
 Route::get('/items/{item}/vendors', array('uses'=>'ItemsController@vendors'));
+Route::get('/items/{item}/carts', array('uses'=>'ItemsController@carts'));
 
 Route::post('/user/login', array('before'=>'csrf', 'uses'=>'UsersController@postLogin'));
 

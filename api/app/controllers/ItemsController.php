@@ -19,7 +19,37 @@ class ItemsController extends BaseController {
 	 */
 	public function store()
 	{
-		//
+		$request = Input::json();
+		if (!$request) {
+			return $this->badRequest('Invalid json string');
+		}
+
+		// attempt to validate
+	    $validation = Item::validate(Input::all());
+	    if (!$validation->passes()) {
+	    	var_dump($validation->getMessageBag()->first());  //TODO: Figure out how to do this
+	    	return $this->badRequest($validation->getMessageBag()->first());
+	    }
+
+	    // if ($validation->passes()) {
+	    //         Question::create(array(
+	    //                 'question' => Input::get('question'),
+	    //                 'user_id' => Auth::user()->id
+	    //         ));
+	    //         return Redirect::route('home')
+	    //                 ->with('message', 'Your question has been posted');
+	    // }
+	    // return Redirect::route('home')
+	    //         ->withErrors($validation)
+	    //         ->withInput();
+
+		
+		// save the data
+
+		// return the resulting record
+//		var_dump($request);
+
+		return Response::json();
 	}
 
 	/**
@@ -30,7 +60,11 @@ class ItemsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		return Item::find($id);
+		$item = Item::find($id);
+		if($item) {
+			return $item;
+		}
+		return $this->notFound();
 	}
 
 	/**
@@ -57,13 +91,24 @@ class ItemsController extends BaseController {
 
 	public function vendors($id)
 	{
-//		var_dump( Item::find($id)->vendors());
-		 return Item::find($id)->vendors()->get();
+		$item = Item::find($id);
+		if (!$item)
+			return $this->notFound();
+		$vendors = $item->vendors();
+		if (!$vendors)
+			return $this->notFound();
+		return $vendors->get();
 	}
 
-	// public function carts()
-	// {
-	// 	return $this->belongsToMany('Cart');
-	// }
+	public function carts($id)
+	{
+		$item = Item::find($id);
+		if (!$item)
+			return $this->notFound();
+		$carts = $item->carts();
+		if (!$carts)
+			return $this->notFound();
+		return $carts->get();
+	}
 
 }
