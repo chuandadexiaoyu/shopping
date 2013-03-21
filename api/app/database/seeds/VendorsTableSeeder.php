@@ -4,7 +4,8 @@ class VendorsTableSeeder extends Seeder {
 
 	public function run()
 	{
-        //TODO: Figure out how to do something
+        DB::table('vendors')->delete();
+
 		$vendors = array(
             array(
                 'name' => 'Home Depot',

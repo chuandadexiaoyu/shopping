@@ -15,13 +15,13 @@ class BaseController extends Controller
         return Response::json()->setStatusCode(404);
     }
 
-    protected static function badRequest($errorString)
+    protected static function badRequest($errorValue)
     {
         // if(!$errorString)
         //     return Response::json()->setStatusCode(400);
         // else
 //            return Response::json($errorString)->setStatusCode(400);
-        return Response::json($errorString)->setStatusCode(400);
+        return Response::json($errorValue)->setStatusCode(400);
     }    
  
 }

@@ -4,6 +4,7 @@ class CartsTableSeeder extends Seeder {
 
 	public function run()
 	{
+        DB::table('carts')->delete();
 		$carts = array(
             array(
                 'user_id' => 2,

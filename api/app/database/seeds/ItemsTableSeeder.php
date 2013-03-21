@@ -4,6 +4,7 @@ class ItemsTableSeeder extends Seeder {
 
 	public function run()
 	{
+        DB::table('items')->delete();
 		$items = array(
             array(
                 'name' => 'Windex',

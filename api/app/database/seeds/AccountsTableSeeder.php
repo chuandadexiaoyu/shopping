@@ -2,7 +2,10 @@
 
 class AccountsTableSeeder extends Seeder {
 
-    public function run() {
+    public function run() 
+    {
+        DB::table('accounts')->delete();
+
         $accounts = array(
             array(
                 'number' => 58250,

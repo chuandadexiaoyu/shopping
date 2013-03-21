@@ -27,9 +27,12 @@ class ItemsController extends BaseController {
 		// attempt to validate
 	    $validation = Item::validate(Input::all());
 	    if (!$validation->passes()) {
-	    	var_dump($validation->getMessageBag()->first());  //TODO: Figure out how to do this
-	    	return $this->badRequest($validation->getMessageBag()->first());
+	    	return $this->badRequest($validation->getMessageBag()->all(':message'));
 	    }
+	    // Item::create(array(
+	    // 	'name' => Input::get('name'),
+	    // 	'details' => Input
+	    // ));
 
 	    // if ($validation->passes()) {
 	    //         Question::create(array(

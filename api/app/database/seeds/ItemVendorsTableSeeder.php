@@ -4,6 +4,8 @@ class ItemVendorsTableSeeder extends Seeder {
 
 	public function run()
 	{
+        DB::table('item_vendors')->delete();
+
 		$item_vendors = array(
             array(
                 'item_id'   =>  1,

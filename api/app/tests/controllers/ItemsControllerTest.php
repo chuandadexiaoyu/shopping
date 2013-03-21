@@ -1,5 +1,7 @@
 <?php
 
+use Mockery\Mockery;
+
 /**
  * This class checks the ItemsController, and also the routing.
  * Everything for ItemsController should be routed through /items
@@ -9,25 +11,47 @@ class ItemsControllerTest extends TestCase
 	public function testerWorks()
 	{
 		$this->assertTrue(True);
-		if($this->runFailingTests)
+		if($this->runFailingTests){
 			$this->assertFalse(True);
+		}
+		$mock = \Mockery::mock('Item');
+		$mock->shouldReceive('test')->once()->andReturn('works');
+		$this->assertEquals('works', $mock->test());
 	}
 
 	public function testIndex()
 	{
 		// $response = $this->action('GET', 'ItemsController/index');
-		$response = $this->call('GET', 'items');
-		$this->assertTrue($response->isOk());
-		$json = json_decode($response->getContent());
+		$json = $this->getJSON('items');
 		$this->assertGreaterThan(10, count($json));
+	}
+
+	public function testMockShow()
+	{
+		// TODO: Figure out how to unit test with a mock 
+		$this->markTestIncomplete();
+		$mock = \Mockery::mock('Item');
+		$mock->shouldReceive('find')->once()->andReturn('["name":"works"]');
+		App::instance('Item', $mock);
+		// $app['Item'] = $mock;
+
+		$response = $this->call('GET', 'items/1');
+        $this->assertTrue($response->isOk());
+        $this->assertFalse($response->isEmpty());
+        $json = json_decode($response->getContent());
+		$this->assertEquals('works', $json->name);
 	}
 
 	public function testShow()
 	{
-		$response = $this->call('GET', 'items/1');
-		$this->assertTrue($response->isOk());
-		$json = json_decode($response->getContent());
-		$this->assertEquals('Windex', $json->name);
+		// $app['Item'] = function() {
+		// 	$mock = \Mockery::mock('Item');
+		// 	$mock->shouldReceive('find')->once()->andReturn('["name":"works"]');
+		// 	return $mock;
+		// };
+		$json = $this->getJSON('items/1');
+		// $this->assertEquals('works', $json->name);
+	 	$this->assertEquals('Windex', $json->name);
 	}
 
 	/**
@@ -37,7 +61,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowInvalidItem()
 	{
-		$response = $this->call('GET', 'items/99');
+		$response = $this->get('items/99');
 		$this->assertTrue($response->isNotFound());
 		$json = json_decode($response->getContent());
 		$this->assertEmpty($json); 
@@ -49,9 +73,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowItemVendors()
 	{
-		$response = $this->call('GET', 'items/2/vendors');
-		$this->assertTrue($response->isOk());
-		$json = json_decode($response->getContent());
+		$json = $this->getJSON('items/2/vendors');
 		$this->assertEquals(4,count($json));
 		$this->assertEquals('Wallmart', $json[0]->name);
 	}
@@ -62,7 +84,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowInvalidItemVendors()
 	{
-		$response = $this->call('GET', 'items/99/vendors');
+		$response = $this->get('items/99/vendors');
 		$this->assertTrue($response->isNotFound());		
 	}
 
@@ -72,9 +94,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowItemNotInCart()
 	{
-		$response = $this->call('GET', 'items/2/carts');
-		$this->assertTrue($response->isOk());		
-		$json = json_decode($response->getContent());
+		$json = $this->getJSON('items/2/carts');
 		$this->assertEquals(0,count($json));
 	}
 
@@ -84,9 +104,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowItemsInCart()
 	{
-		$response = $this->call('GET', 'items/10/carts');
-		$this->assertTrue($response->isOk());		
-		$json = json_decode($response->getContent());
+		$json = $this->getJSON('items/10/carts');
 		$this->assertEquals(2,count($json));
 	}
 
@@ -96,36 +114,32 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testShowInvalidItemCarts()
 	{
-		$response = $this->call('GET', 'items/99/carts');
+		$response = $this->get('items/99/carts');
 		$this->assertTrue($response->isNotFound());		
 	}
 
 	/**
 	 * Fail a test due to bad json being sent. 
-	 * The call method takes these parameters:
-	 *   string  $method 		The HTTP method (GET, POST, PUT, DELETE, etc.)
-	 *   string  $uri 			The URI
-	 *   array   $parameters 	The query (GET) or request (POST) parameters
-	 *   array   $files 		The request files ($_FILES)
-	 *   array   $server 		The server parameters ($_SERVER)
-	 *   string  $content 		The raw body data
-	 *   bool    $changeHistory	
-	 *   
 	 */
 	public function testFailToStoreItemDueToBadJSON()
 	{
         $json = '{"name":"dragon","details":"I like dragons.",{}';
-        $response = $this->call('POST', 'items', array(), array(), array(), $json);
+        $response = $this->post('items', $json);
         $this->assertTrue($response->isClientError(), 'should have a client error');
         $this->assertEquals('"Invalid json string"', $response->getContent(), 'should return error message');
 	}
 
 	public function testFailToStoreItemDueToInvalidData()
 	{
+		// $mock = \Mockery::mock('Validator');
+		// $mock->shouldReceive('make')->once()->andReturn(False);
+
         $json = '{"name":"","details":"I like dragons."}';
-        $response = $this->call('POST', 'items', array(), array(), array(), $json);
+        $response = $this->post('items', $json);
         $this->assertTrue($response->isClientError(), 'should reject due to invalid data');
-        // $this->assertEquals('"Invalid json string"', $response->getContent(), 'should return error message');
+        $this->assertEquals('["The name field is required."]', 
+        	$response->getContent(), 
+        	'should return error message');
 	}
 
 	/**
@@ -135,9 +149,14 @@ class ItemsControllerTest extends TestCase
 // 	public function testStoreItem()
 // 	{
 // 		$json = '{"name":"dragon","details":"I like dragons."}';
-// 		$response = $this->call('POST', 'items', array(), array(), array(), $json);
+        // $response = $this->post('items', $json);
 // 		$this->assertTrue($response->isOK());
 // //		$response = $this->call('POST', 'items&name="test item"&details="This is a single test item"')
 // 	}
 
+	public function testDeleteItem()
+	{
+		$response = $this->delete('items/10');
+
+	}
 }
