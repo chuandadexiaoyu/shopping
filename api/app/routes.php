@@ -11,6 +11,8 @@
 |
 */
 
+App::bind('ItemRepositoryInterface', 'EloquentItemRepository');
+
 Route::get('/', array('as'=>'home', 'uses'=>'UsersController@getLogin'));
 Route::get('/user/login', array('as'=>'login', 'uses'=>'UsersController@getLogin'));
 Route::get('/user/logout', array('as'=>'logout', 'uses'=>'UsersController@getLogout'));

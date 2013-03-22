@@ -1,6 +1,21 @@
 <?php
 
+use Mockery\Mockery;
+
 class TestCase extends Illuminate\Foundation\Testing\TestCase {
+
+    public function tearDown()
+    {
+        \Mockery::close();
+    }
+
+    public function mock($class)
+    {
+        $repo = $class . 'RepositoryInterface';
+        $mock = \Mockery::mock($repo);
+        App::instance($repo, $mock);        
+        return $mock;
+    }
 
     /**
      * Creates the application.
@@ -10,16 +25,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function createApplication()
     {
         $this->runFailingTests = False;
-
     	$unitTesting = true;
-
         $testEnvironment = 'testing';
 
     	return require __DIR__.'/../../bootstrap/start.php';
     }
 
-    public function assertOK($response)
+    public function assertOK()
     {
+        $response = $this->client->getResponse();
         $this->assertTrue($response->isOk());
         $this->assertFalse($response->isEmpty());
     }
@@ -27,7 +41,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function getJSON($uri)
     {
         $response = $this->get($uri);
-        $this->assertOK($response);
+        $this->assertOK();
         return json_decode($response->getContent());
     }
 

@@ -26,33 +26,31 @@ class ItemsControllerTest extends TestCase
 		$this->assertGreaterThan(10, count($json));
 	}
 
+
 	public function testMockShow()
 	{
-		// TODO: Figure out how to unit test with a mock 
-		$this->markTestIncomplete();
-		$mock = \Mockery::mock('Item');
-		$mock->shouldReceive('find')->once()->andReturn('["name":"works"]');
-		App::instance('Item', $mock);
-		// $app['Item'] = $mock;
+	 	$mock = \Mockery::mock('ItemRepositoryInterface');
+		$mock->shouldReceive('find')->once()->andReturn('{"name":"works"}');
+		App::instance('ItemRepositoryInterface', $mock);
 
-		$response = $this->call('GET', 'items/1');
-        $this->assertTrue($response->isOk());
-        $this->assertFalse($response->isEmpty());
-        $json = json_decode($response->getContent());
+		$json = $this->getJSON('items/1');
 		$this->assertEquals('works', $json->name);
 	}
 
-	public function testShow()
+	public function testMockItemShow()
 	{
-		// $app['Item'] = function() {
-		// 	$mock = \Mockery::mock('Item');
-		// 	$mock->shouldReceive('find')->once()->andReturn('["name":"works"]');
-		// 	return $mock;
-		// };
+		$this->mock('Item')->shouldReceive('find')->once()->andReturn('{"name":"works"}');
 		$json = $this->getJSON('items/1');
-		// $this->assertEquals('works', $json->name);
-	 	$this->assertEquals('Windex', $json->name);
+		$this->assertEquals('works', $json->name);
 	}
+
+	// This will load data from the database, so is no longer needed for our tests.
+	// public function testShow()
+	// {
+	// 	$json = $this->getJSON('items/1');
+	// 	// $this->assertEquals('works', $json->name);
+	//  	$this->assertEquals('Windex', $json->name);
+	// }
 
 	/**
 	 * Try to open an item that does not exist in the database
@@ -134,6 +132,7 @@ class ItemsControllerTest extends TestCase
 		// $mock = \Mockery::mock('Validator');
 		// $mock->shouldReceive('make')->once()->andReturn(False);
 
+//		$this->mock('Validator')->shouldReceive('make')->once()->andReturn(False);
         $json = '{"name":"","details":"I like dragons."}';
         $response = $this->post('items', $json);
         $this->assertTrue($response->isClientError(), 'should reject due to invalid data');
@@ -154,9 +153,9 @@ class ItemsControllerTest extends TestCase
 // //		$response = $this->call('POST', 'items&name="test item"&details="This is a single test item"')
 // 	}
 
-	public function testDeleteItem()
-	{
-		$response = $this->delete('items/10');
+	// public function testDeleteItem()
+	// {
+	// 	$response = $this->delete('items/10');
 
-	}
+	// }
 }

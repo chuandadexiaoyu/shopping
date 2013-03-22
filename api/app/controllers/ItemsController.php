@@ -1,6 +1,12 @@
 <?php
 
-class ItemsController extends BaseController {
+class ItemsController extends BaseController 
+{
+
+	public function __construct(ItemRepositoryInterface $items)
+	{
+		$this->items = $items;
+	}
 
 	/**
 	 * Display a listing of the resource.
@@ -9,7 +15,7 @@ class ItemsController extends BaseController {
 	 */
 	public function index()
 	{
-		return Item::all();
+		return $this->items->all();
 	}
 
 	/**
@@ -25,11 +31,11 @@ class ItemsController extends BaseController {
 		}
 
 		// attempt to validate
-	    $validation = Item::validate(Input::all());
+	    $validation = $this->items->validate(Input::all());
 	    if (!$validation->passes()) {
 	    	return $this->badRequest($validation->getMessageBag()->all(':message'));
 	    }
-	    // Item::create(array(
+	    // $this->items->create(array(
 	    // 	'name' => Input::get('name'),
 	    // 	'details' => Input
 	    // ));
@@ -63,7 +69,7 @@ class ItemsController extends BaseController {
 	 */
 	public function show($id)
 	{
-		$item = Item::find($id);
+		$item = $this->items->find($id);
 		if($item) {
 			return $item;
 		}
@@ -94,7 +100,7 @@ class ItemsController extends BaseController {
 
 	public function vendors($id)
 	{
-		$item = Item::find($id);
+		$item = $this->items->find($id);
 		if (!$item)
 			return $this->notFound();
 		$vendors = $item->vendors();
@@ -105,7 +111,7 @@ class ItemsController extends BaseController {
 
 	public function carts($id)
 	{
-		$item = Item::find($id);
+		$item = $this->items->find($id);
 		if (!$item)
 			return $this->notFound();
 		$carts = $item->carts();
