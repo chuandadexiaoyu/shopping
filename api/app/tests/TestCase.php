@@ -35,7 +35,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     {
         $response = $this->client->getResponse();
         $this->assertTrue($response->isOk());
-        $this->assertFalse($response->isEmpty());
+        $this->assertNotEmpty($response->getContent());
     }
 
     public function getJSON($uri)

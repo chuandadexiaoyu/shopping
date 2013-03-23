@@ -12,6 +12,7 @@
 */
 
 App::bind('ItemRepositoryInterface', 'EloquentItemRepository');
+App::bind('VendorRepositoryInterface', 'EloquentVendorRepository');
 
 Route::get('/', array('as'=>'home', 'uses'=>'UsersController@getLogin'));
 Route::get('/user/login', array('as'=>'login', 'uses'=>'UsersController@getLogin'));
