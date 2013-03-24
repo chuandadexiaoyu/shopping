@@ -1,0 +1,30 @@
+Helpful links -------------------------------------------
+
+Composer Package Directory
+http://packagist.org
+
+REST API
+http://net.tutsplus.com/tutorials/php/laravel-4-a-start-at-a-restful-api/
+
+Testing Laravel Models
+http://net.tutsplus.com/tutorials/php/testing-like-a-boss-in-laravel-models/
+
+Laravel 4 IoC and Facades
+http://www.thenerdary.net/post/30859565484/laravel-4
+
+Dependency Injection and IoC in Laravel 4 Controllers
+http://www.nathandavison.com/posts/view/16/using-dependency-injection-and-ioc-in-laravel-4-controllers
+
+Integration Testing the DOM with a web crawler 
+Information from http://symfony.com/doc/2.0/book/testing.html
+http://symfony.com/doc/2.0/components/dom_crawler.html
+
+
+
+Important Project File Reference ------------------------
+
+HTTP Response Codes:
+vendor\symfony\http-foundation\Symfony\Component\HttpFoundation\Response.php
+
+See a full list of autoloaded classes for the project (refresh via composer dump-autoload):
+<project dir>/vendor/composer/autoload_classmap.php

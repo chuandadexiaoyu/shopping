@@ -1,0 +1,912 @@
+Saturday, 23 March 2013 ---------------------------------
+
+Let's keep running notes, examples, and links with the project itself, rather than scattered all over the place.
+
+
+Environment ------------------------------------------
+
+Software technologies used:
+WAMP/LAMP
+SublimeText2
+git
+php
+phpunit
+Laravel 4beta
+REST interface
+JSON
+HTML5
+CSS
+jQuery
+(client framework?)
+
+---
+SublimeText2 Shortcuts:
+    Ctrl+Shift+Backspace  Delete to beginning of line
+    Ctrl+Backspace        Delete current word 
+    Ctrl+L                Select current line (multiple times for multiple lines)
+    Ctrl+D                Select current word/next instances (sets up multiple cursors)
+    Alt+F3                Select all similar instances in document (multiple cursors)
+    Ctrl+Shift+P          Command Palette
+    Ctrl+P                Open Files/Folders in project
+    Ctrl+Alt+N            New file/folder (with AdvancedNewFile)
+
+SublimeText2 Installed Packages
+    AdvancedNewFile             Type in new path/file to create and open instantly
+    DocBlockr                   Create template for doc block from function/class definition 
+    Emmet                       Quickly write html code, based on css descriptors. Love it!
+    FindKeyConflicts            Find conflicts for quick keys
+    Package Control             Easily find and install packages
+    SideBarEnhancements         Full commands when right-clicking on sidebar
+    SublimeLinter               Highlight lines with errors in the code after saving;
+    SublimeTODO                 Create an index for all of your TODO, FIXME, and similar comments
+
+
+---
+git:
+
+    git init            Initialize a new git repository
+    git clone <src>     Copy a remote repository to the local machine (working tree)
+    git add *           Add all files in the path on the local machine to the track list
+    git status          Shows the current status of tracked files (in the working tree)
+    git commit          Commits changes to the local repository
+    git push            Pushes changes to the remote repository
+    git pull            Pull (and merge) changes from the remote repository
+
+
+---
+Composer:
+
+Use composer to install additional components for the app.
+
+Get composer at http://getcomposer.org/
+It looks for a file called composer.json in your project root directory:
+{
+        "require": {
+                "laravel/framework": "4.0.*",
+                "mockery/mockery": "dev-master"
+        },
+        "autoload": {
+                "classmap": [
+                        "app/commands",
+                        "app/controllers",
+                        "app/models",
+                        "app/database/migrations",
+                        "app/database/seeds",
+                        "app/tests"
+                ]
+        },
+        "minimum-stability": "dev"
+}
+
+composer install                  // installs packages
+composer update                   // updates packages
+composer update --dev             // updates packages for the require-dev section
+composer dump-autoload            // dumps, and refreshes the autoload list
+
+The app will automatically load files from the autoloaded directories.
+You can see what classes it found by checking:
+    vendor/composer/autoload_classmap.php
+
+
+
+
+MVC -----------------------------------------------------------------------------
+
+MVC is a software pattern that separates the representation of information
+from the user's interactions with it.
+
+Model       - Classes which contain all of the business logic of the application
+View        - Classes which format and present data to the user
+Controller  - Classes which coordinate user actions and routing
+
+
+
+
+
+REST  ----------------------------------------------------------------------
+
+REST is a web service design model meant to make applications usable, well-designed, 
+and easy to integrate. It does things like standardizing the naming conventions of 
+components. Its goals include things like:
+* Scalability of component interactions
+* Generality of interfaces
+* Independent deployment of components
+* Intermediary components to reduce latency, enforce security and encapsulate legacy systems
+* Self-similarity, and easy to learn
+
+Per object, we only need 2 base URLs:
+    plural (collection)   /dogs
+    singular              /dogs/bo  (or /dogs/1)
+
+    Resource    GET         PUT          POST               DELETE
+    /dogs       list dogs   <error>      create a new dog   delete all dogs
+    /dogs/bo    show bo     update bo    <error>            delete this dog (bo)
+
+Verbs in URL are bad
+Nouns are good; use plural nouns for url names
+WHERE statements would be behind the question mark:
+    /dogs?color=red&state=running&loc=park
+    (as opposed to getRedDogsRunningAtPark)
+
+So, where a legacy system might have functions like this:
+    getUsers()
+    getNewUsersSince(date SinceDate)
+    savePurchaseOrder(string CustomerID, string PurchaseOrderID)
+
+A RESTful system might have:
+    /users
+    /users?date>=sinceDate
+    /purchaseOrder  (with POST values for the data)
+
+Pagination:
+    /users?start=x&count=y  (or offset/limit, or page/rpp)
+
+Specific fields only:
+    /users?:(id,name,etc)
+
+Orders/commands/events:
+    PUT /dogs/bo?command=bark
+    GET /dogs/bo?:(state)
+    return  {"state": "barking"}
+
+Types:
+    /users.json  (returns it as json)
+    /users.xml   (returns it as xml)
+    GET /dogs/bo.json?:(state)
+
+Inheritance:
+    GET /dogs/bo
+    GET /animals/bo
+    (return the same result)
+
+Laravel function mapping to REST:
+    Function    REST
+    index       GET - list all items
+    create      GET - show form for creating new item
+    store       POST - write a new item
+    show        GET - Show form to display one item (eg site/photos/1)
+    edit        GET - Show form for editing one item (eg site/photos/1/edit)
+    update      PUT - write changes to existing item
+    destroy     DESTROY - delete an item
+
+
+
+
+Test Driven Development (TDD) ---------------------------------------------------
+
+This is a development technique that helps create more reliable code over time.
+Begin by writing a test that will fail
+Test it (make sure it fails)
+Write the code to make the test pass
+Test it (make sure it passes)
+Refactor (make sure all tests still pass)
+
+---
+Mocks:
+A mock is a replacement for an object that we can use for testing.
+Rather than hitting an actual class (eg, to write to the database), go to a mock
+Integration testing should hit actual classes
+
+Mockery is a project that makes creation and handling of mocks easier:
+in composer.json, require  "mockery/mockery": "dev-master"
+
+Using Mocks:
+(instructions from https://tutsplus.com/tutorial/better-testing-in-laravel/)
+My controller is ItemsController
+My model is Item
+
+I'll set up several different classes:
+ItemsController
+Item
+ItemRepositoryInterface
+EloquentItemRepository
+
+In ItemsController, use this:
+    public function __construct(ItemRepositoryInterface $items)
+    {
+        $this->items = $items;
+    }
+
+    Interface ItemRepositoryInterface
+    {
+        public function all();
+        public function find($id);
+        ...
+        any other functions you want the controller to be able to access
+    }
+
+    class EloquentItemRepository implements ItemRepositoryInterface
+    {
+        public function all(){     return Item::all(); }
+        public function find($id){ return Item::find($id); }
+        ... 
+        other functions, just call the corresponding item function
+    }
+
+The application also needs to know the default repository to use to implement the interface:
+    App::bind('ItemRepositoryInterface', 'EloquentItemRepository');
+
+When testing, using Mockery,
+    public function testMockShow()
+    {
+        $mock = \Mockery::mock('ItemRepositoryInterface');
+        $mock->shouldReceive('find')->once()->andReturn('{"name":"works"}');
+        App::instance('ItemRepositoryInterface', $mock);
+
+        $response = $this->call('GET', 'items/1');
+        $this->assertTrue($response->isOk());
+        $this->assertNotEmpty($response->getContent());
+        $json = json_decode($response->getContent());
+        $this->assertEquals('works', $json->name);
+    }
+
+This should bypass the database completely.
+In some cases, we need to return an intermediate object (eg, items/1/vendors)
+
+    public function testShowItemVendors()
+    {
+        $mockVendor = $this->mock('Vendor');
+        $mockVendor->shouldReceive('get')->once()->andReturn('{"name":"vendor works"}');
+
+        $mockItem = $this->mock('Item');
+        $mockItem->shouldReceive('find')->once()->andReturn($mockItem);
+        $mockItem->shouldReceive('vendors')->once()->andReturn($mockVendor); 
+
+        $response = $this->call('GET', 'items/1/vendors');
+        $this->assertTrue($response->isOk());
+        $this->assertNotEmpty($response->getContent());
+        $json = json_decode($response->getContent());
+        $this->assertEquals('vendor works', $json->name);
+    }
+
+    public function mock($class)
+    {
+        $repo = $class . 'RepositoryInterface';
+        $mock = \Mockery::mock($repo);
+        App::instance($repo, $mock);       
+        return $mock;
+    }
+
+---
+phpunit
+
+I'm using phpunit for testing. It will read configuration information from phpunit.xml, in the root directory of the project.
+
+We can only test some groups at a time:
+
+    /**
+     * @group database
+     * @group remoteTasks
+     */
+    public function testSomething()
+    {
+    }
+
+testSomething() is now in two groups, and if either is added on the command line (or in the config.xml) --exclude-group parameter. it won't be run.
+
+phpunit --exclude-group integration         // won't run integration tests tagged with @group integration
+phpunit --group integration                 // will run only tests tagged with @group integration
+
+Tags for phpunit can be put on either classes or individual functions.
+
+
+---
+Make a test dependent on success of a previous test:
+ 
+    public function testEmpty()
+    {
+        $stack = array();
+        $this->assertTrue(empty($stack));
+        return $stack;   // also sends this variable to any following tests - if this worked
+    }
+
+    /**
+     * only runs if testEmpty() passed
+     *
+     * @depends testEmpty
+     */
+    public function testPush(array $stack)
+    {
+    }
+
+
+---
+Call/Response:
+
+When unit testing, we can call functions and get the responses. We can also do this with mocks. The basic format is like this:
+
+    $response = $this->call('GET', 'items/1/vendors');
+    $this->assertTrue($response->isOk());
+    $this->assertNotEmpty($response->getContent());
+
+The response class has several useful functions, including:
+    getStatusCode()
+    getContent()
+    getOriginalContent()
+
+Response Helper Functions
+    Function Name           Status Codes
+    isInvalid()             <100 and >=600
+    isInformational()       >=100 and <200
+    isSuccessful()          >=200 and <300
+    isRedirection()         >=300 and <400
+    isClientError()         >=400 and <500
+    isServerError()         >=500 and <600
+    isOk()                  200
+    isForbidden()           403
+    isNotFound()            404
+    isRedirect()            201,301,302,303,307,308
+    isEmpty()               201,204,304
+    isNotModified()
+ 
+use like:
+    if ($response->isOK)  doSomething;
+
+
+---
+Laravel 4 IoC and Facades
+http://www.thenerdary.net/post/30859565484/laravel-4
+
+When using a laravel class, we generally use a facade:
+    $var = Session::get('foo');
+ 
+Under the hood, it does this:
+    $app->resolve('session')->get('foo');
+ 
+So, we can swap out parts of the framework, like so:
+    $app['session'] = function()
+    {
+        return new MyCustomSessionLayer;
+    }
+ 
+For instance, maybe you want to make the whole Redirect layer for a test. In your test you could just do:
+    $app['redirect'] = $mock;
+
+https://news.ycombinator.com/item?id=5044336
+However, things like the Input, URL, File, etc. classes still being static could lead to some testability problems. I've broken encapsulation on the Input class just to make it a little more testable. You can set the Input just by saying "Input::$input = array()".
+ 
+---
+In-memory database and test environment
+
+An in-memory database is much faster than writing data to your actual database (it doesn't require any disk reads, indexes, etc.)
+
+From: http://net.tutsplus.com/tutorials/php/testing-like-a-boss-in-laravel-models/
+Within the app/config/testing directory, create a new file, named database.php, and fill it with the following content:
+
+    // app/config/testing/database.php
+    <?php     
+    return array( 
+        'default' => 'sqlite',
+        'connections' => array(
+            'sqlite' => array(
+                'driver'   => 'sqlite',
+                'database' => ':memory:',
+                'prefix'   => ''
+            ),
+        )
+    );
+ 
+Before running tests
+Since the in-memory database is always empty when a connection is made, it’s important to migrate the database before every test. To do this, open app/tests/TestCase.php and add the following method to the end of the class:
+
+    /**
+     * Migrates the database.
+     * This will cause the tests to run quickly.
+     *
+     */
+    private function prepareForTests()
+    {
+        Artisan::call('migrate');   // sets up all tables
+        $this->seed;                // seed test database values
+        Mail::pretend(true);        // if using mail
+    }
+
+    // When using Mockery, it's important to close it at the end of the test
+    public function tearDown()
+    {
+        \Mockery::close();
+    }
+
+---
+Web Crawler
+The Symphony web crawler component will go through the DOM of the page to handle very specific test cases. It can be used during integration tests to simulate a browser (much faster than Selenium).
+
+// Click a link:
+    $crawler = $this->client->request('GET', '/user/login');
+    $link = $crawler->filter('a:contains("Greet")')->eq(1)->link();
+    $crawler = $client->click($link);
+ 
+// Find the submit button on a form:
+    $form = $crawler->selectButton('submit')->form();
+ 
+// set some values
+    $form['name'] = 'Lucas';
+    $form['form_name[subject]'] = 'Hey there!';
+ 
+// submit the form
+    $crawler = $client->submit($form);
+  
+// Assert that the response matches a given CSS selector.
+    $this->assertGreaterThan(0, $crawler->filter('h1')->count());
+ 
+Test against the Response content directly if you just want to assert that the content contains some text, or if the Response is not an XML/HTML document:
+    $this->assertRegExp(
+        '/Hello Fabien/',
+        $client->getResponse()->getContent()
+    );
+ 
+Force each request to be executed in its own PHP process to avoid any side-effects when working with several clients in the same script:
+    $client->insulate();
+ 
+// Search through all content on page for a string
+    $crawler = $this->client->request('GET', '/user/login');
+    $this->assertTrue($this->client->getResponse()->isOk(), 'should have an OK response');
+    $this->assertContains('Please Log In', 
+        $this->client->getResponse()->getContent(), 'should contain "Please Log In" ');
+ 
+// Find a specific string in a specific location
+    $crawler = $this->client->request('GET', '/user/login');
+    $this->assertCount(1, $crawler->filter('h1:contains("Please Log In")'), 
+        'should contain "Please Log In" in h1 tag (only once)');
+ 
+Useful Assertions
+    // Assert that there is at least one h2 tag with the class "subtitle"
+    $this->assertGreaterThan( 0, $crawler->filter('h2.subtitle')->count());
+ 
+    // Assert that there are exactly 4 h2 tags on the page
+    $this->assertCount(4, $crawler->filter('h2'));
+ 
+    // Assert that the "Content-Type" header is "application/json"
+    $this->assertTrue(
+        $client->getResponse()->headers->contains(
+            'Content-Type',
+            'application/json'
+        )
+    );
+ 
+    // Assert that the response content matches a regexp.
+    $this->assertRegExp('/foo/', $client->getResponse()->getContent());
+ 
+    // Assert that the response status code is 2xx
+    $this->assertTrue($client->getResponse()->isSuccessful());
+ 
+    // Assert that the response status code is 404
+    $this->assertTrue($client->getResponse()->isNotFound());
+ 
+    // Assert a specific 200 status code
+    $this->assertEquals(200,$client->getResponse()->getStatusCode());
+ 
+    // Assert that the response is a redirect to /demo/contact
+    $this->assertTrue($client->getResponse()->isRedirect('/demo/contact'));
+ 
+    // or simply check that the response is a redirect to any URL
+    $this->assertTrue($client->getResponse()->isRedirect());
+ 
+Browsing
+The Client supports many operations that can be done in a real browser:
+    $client->back();
+    $client->forward();
+    $client->reload();
+ 
+    // Clears all cookies and the history
+    $client->restart();
+ 
+Accessing Internal Objects
+If you use the client to test your application, you might want to access the client's internal objects:
+    $history   = $client->getHistory();
+    $cookieJar = $client->getCookieJar();
+ 
+You can also get the objects related to the latest request:
+    $request  = $client->getRequest();
+    $response = $client->getResponse();
+    $crawler  = $client->getCrawler();
+ 
+If your requests are not insulated, you can also access the Container and the Kernel:
+    $container = $client->getContainer();
+    $kernel    = $client->getKernel();
+ 
+Redirecting
+When a request returns a redirect response, the client does not follow it automatically. You can examine the response and force a redirection afterwards with the followRedirect() method:
+    $crawler = $client->followRedirect();
+ 
+If you want the client to automatically follow all redirects, you can force him with the followRedirects() method:
+    $client->followRedirects();
+ 
+The Crawler
+A Crawler instance is returned each time you make a request with the Client. It allows you to traverse HTML documents, select nodes, find links and forms.
+ 
+Traversing
+Like jQuery, the Crawler has methods to traverse the DOM of an HTML/XML document. For example, the following finds all input[type=submit] elements, selects the last one on the page, and then selects its immediate parent element:
+    $newCrawler = $crawler->filter('input[type=submit]')
+        ->last()
+        ->parents()
+        ->first();
+ 
+Many other methods are also available:
+    Method                  Description
+    filter('h1.title')      Nodes that match the CSS selector
+    filterXpath('h1')       Nodes that match the XPath expression
+    eq(1)                   Node for the specified index
+    first()                 First node
+    last()                  Last node
+    siblings()              Siblings
+    nextAll()               All following siblings
+    previousAll()           All preceding siblings
+    parents()               Returns the parent nodes
+    children()              Returns children nodes
+    reduce($lambda)         Nodes for which the callable does not return false
+ 
+Extracting Information
+    // Returns the attribute value for the first node
+    $crawler->attr('class');
+ 
+    // Returns the node value for the first node
+    $crawler->text();
+ 
+    // Extracts an array of attributes for all nodes (_text returns the node value)
+    // returns an array for each element in crawler, each with the value and href
+    $info = $crawler->extract(array('_text', 'href'));
+ 
+    // Executes a lambda for each node and return an array of results
+    $data = $crawler->each(function ($node, $i)
+    {
+        return $node->attr('href');
+    });
+ 
+Links¶
+To select links, you can use the traversing methods above or the convenient selectLink() shortcut:
+    $crawler->selectLink('Click here');
+ 
+    $link = $crawler->selectLink('Click here')->link();
+    $client->click($link);
+ 
+Forms
+    $buttonCrawlerNode = $crawler->selectButton('submit'); 
+
+
+
+
+
+
+Laravel -------------------------------------------------------------------------
+
+Using Laravel 4:  http://four.laravel.com
+
+---
+Set Up:
+To set up laravel, copy the basic project from above, and run composer install to get all of the dependencies.
+
+Set the project root directory in apache to the /public folder
+(this is a place for css, img, js, etc. files, also)
+
+make storage directory writable:
+    chmod -R o+w storage
+    (or chown www-data storage/*)
+
+application key:
+    app/config/app.php
+use command line to generate secure application key:
+    php artisan key:generate
+
+Laravel configuration information stored in project/app/config
+Each file here returns an array with configuration information (closures are OK)
+Access it at any time with Config::get. Use the file name and array key:
+    Config::get('app.timezone')
+
+For any classes that use facades (most of Laravel's classes), get the original class name with:
+    echo get_class(App::getFacadeRoot());       (App, or any other class)
+
+
+Laravel’s components are instances that exist within the Laravel 4 $app container object. They can be called in each of these ways:
+ 
+    $app['component']->methodName();
+    $app->component->methodName();.
+    Component::methodName();
+
+---
+To bind classes to the IoC container:
+ 
+    $app->bind('UsersController', function($app) {
+        $controller = new UsersController(
+            new Response,
+            $app->make('request'),
+            $app->make('validator'),
+            $app->make('hash'),
+            new User
+        );
+        return $controller;
+    });
+ 
+At this point, we can make the class, using
+    $app->make('UsersController') ;
+
+
+---
+Migrations and Seeding
+Migrations are like version control for your databases.
+ 
+    php artisan migrate:make create_users_table 
+
+creates the basic structure for a new 'users' table. Fill it in further, to get:
+    public function up()
+    {
+        Schema::create('users', function($table) {
+            $table->increments('id')->unsigned();   // auto-increments an unsigned id field
+            $table->string('name',50);              // sets to length you entered
+            $table->string('email');                // sets to varchar 200
+            $table->string('password');
+            $table->boolean('activated')->default(0);   // sets a default value
+            $table->integer('age')->nullable();         // allows nulls
+            $table->timestamps();                       // creates created_at and modified_at fields
+        });
+    }
+
+Use seeds to add sample records:
+Create a file within the app/database/seeds folder that has the same name as the table that it corresponds to; in our case, users.php. Add:
+    <?php 
+    return array(
+        array(
+            'username' => 'firstuser',
+            'password' => Hash::make('first_password'),
+            'created_at' => new DateTime,
+            'updated_at' => new DateTime
+        ),
+        array(
+            'username' => 'seconduser',
+            'password' => Hash::make('second_password'),
+            'created_at' => new DateTime,
+            'updated_at' => new DateTime
+        )
+    );
+ 
+ 
+Run the migrations and insert sample records:
+    // Make sure the auto-loader knows about these new classes
+    php composer.phar dump-autoload
+
+To run the migration:
+    php artisan migrate                     // run all migrations that have not been run
+    php artisan migrate:refresh             // roll back and re-run all migrations
+    php artisan migrate:refresh --seed      // refresh, then seed the database
+    php artisan db:seed                     // seed the database
+
+---
+Artisan Class Generator
+jeffrey way (nettuts) has created an add-in for artisan, which can automatically generate items for you.
+    require "way/generators": "dev-master"           (composer.json)
+    'Way\Generators\GeneratorsServiceProvider'       (add to providers array)
+
+    php artisan generate:resource
+
+--- 
+Controllers:
+
+    php artisan controller:make <Controller name>
+
+creates lots of functions, including:
+
+      index   GET  - collection, eg site/photos
+      create  GET  - display form to add new record - site/photos/create
+      store   POST - take input from new item, write new record
+      edit    GET  - display form to edit record - site/photos/1/edit
+      update  PUT  - submitted form, update existing record
+      show    GET  - item, eg site/photos/1
+      destroy DELETE sent - delete an object
+ 
+    Route::resource('photos','PhotosController');
+ 
+Laravel 4 is restful by default.
+in index(), if you return Photo::all(), you'll get json output
+
+These are equivalent ways to return data to a user:
+    return Photo::all();  
+or
+    $photos = Photo::all();
+    return View::make('photos.index', compact('photos'));
+or
+    return View::make('photos.index')->with(array('photos' => $photos));
+ 
+In a view, to get a link to the photos.show method (parameter id), use:
+  <a href="{{ route('photos.show', ['photos' => $photo->id]) }}"> 
+
+photos/create -> POST photos -> photos/store
+photos/edit/1 -> PUT photos/1 -> photos/1/update
+GET photos/id/delete
+DELETE photos/id
+
+
+---
+Models
+
+By default, the table name will be plural, and the model name will be singular. This can be changed, though…
+ 
+Table   Model   Controller
+users   User    UsersController
+ 
+To use something else, in the model,
+ 
+    <?php
+    class User extends Eloquent {
+        public static $table = 'my_user_table';
+    }
+
+---
+Routing:
+Here are a few different ways to send variables to the default view:
+ 
+via the routes.php file:
+    $data = array(
+        'greeting'   => 'hello',
+        'something'  => 'world',
+        'items'      => array('Item1', 'Item2', 'Item3', 'Item4'),
+        'data_items' => array('First','Second')
+    );
+
+    Route::get('/', function() {
+        return View::make('home.index', $data);
+    };
+
+or:
+
+    Route::get('/', function() {
+        return View::make('home.index')->with($data);        
+    });
+
+or:
+
+    Route::get('/', function() {
+        $view = View::make('home.index');
+        $view->greeting = 'Hi';
+        $view->something = 'Everyone';
+        return $view;
+    });
+ 
+Via a controller:
+ 
+(in routes.php):
+    Route::controller('home');
+ 
+(in controllers/home.php):
+    public function action_index() {
+        return View::make('home.index', $data);
+    }
+
+
+
+Differences Between Laravel 3 and 4
+
+Run a server to show Laravel data (need php 5.4.x):
+  L3: php -S localhost:8888 -t public     (go to localhost:8888 to get to the page)
+  L4: php artisan serve
+ 
+Route declarations:
+  L3: Route::get('users/(:num)', function(id){ var_dump( $id ); });
+  L4: Route::get('users/{id}', function(id){ var_dump( $id ); })
+            ->where('id','\d+');        // regular expression, 1+ digits
+ 
+Templates:
+  L3: Route::get('/', 'Home@index');
+ 
+      Home_Controller
+        public $layout='master';
+        public function action_index() {
+            $this->layout->content = View::make('home.index');
+            (or return View::make('home.index'), with @layout('master') in index.blade.php)
+   
+      master.blade.php:
+        <div>@yield('content')
+      index.blade.php:
+        @layout('master')          // if layout not specified in controller
+        @section('content')
+          Home Page here
+        @endsection
+ 
+  L4: Route::get('/', 'HomeController@index');
+ 
+      HomeController:
+        protected $layout='master';
+        public function index() {
+            $this->layout->content = View::make('home.index')
+            (or return View::make('home.index'), with @extends('master') in index.blade.php)
+   
+      master.blade.php:
+        <div>@yield('content')
+      index.blade.php:
+        @extends('master')       // if layout not specified in controller
+        @section('content')
+          Home Page here
+        @stop  (to declare the end of a section)
+   
+Forms:
+  L3:   {{ Form::open('users') }}
+            {{ Form::label('firstname', 'First Name') }}
+            {{ Form::text('firstname') }}
+        {{ Form::close() }}
+ 
+  L4:   <currently unavailable>
+ 
+  L3:  HTML::link
+  L4:  HTML::to
+  
+Migrations:
+  L3:
+      php artisan migrate:install                         // install the migrations table
+      php artisan migrate:make create_posts_table         // then update the table
+      artisan migrate:rollback                            // roll back the previous migration
+      artisan migrate:reset                               // roll back all migrations
+  L4: (all of the L3 commands will work...)
+      php artisan migrate:make create_posts_table --table=posts --create
+        (does not need artisan migrate:install)
+      artisan migrate:refresh                       // roll back everything, and re-run
+      artisan migrate:refresh --seed                // do the above, and run all seeds
+
+Seeding tables:
+  L3: <does not have that functionality>
+  L4: Prepare seed files as described above, then enter:
+        artisan db:seed
+      or:
+        artisan migrate:refresh --seed
+ 
+
+Laravel 4 includes Route Model Binding (inject model instances into route closures)
+It automatically returns all collections from a method or closure as JSON
+
+Routes (without route model binding): 
+  L3:   Route::get('users', function() { return User::all(); }});
+  L4:   Route::get('users/{id}', function($id) { return User::find($id); }})->where('id', '\d+');
+
+Routes (with route model binding):
+  L4:   Route::model('user', 'User');
+  or:   Route::bind('user', function($id, $route) { return User::where('id', $id)->first(); }));
+        Route::get('users/{user}', function (User $user) { return $user; }));
+ 
+Linking to routes in a view: 
+  L3:   HTML::link_to_route('routeName', 'Display')
+  L4:   <a href="{{URL::route('routeName')}}>Display</a>
+  or:   HTML::to(URL::route('routeName'), 'Display')
+
+Redirection:
+  L3:   Redirect::to_route('routeName')
+  L4:   Redirect::route('routeName')
+
+Redirection with errors and input:
+  L3:   Redirect::with_errors()->with_input()
+  L4:   Redirect::withErrors()->withInput()
+ 
+Reporting errors in a view:
+  L3:   @if($errors->has())
+            <p>The following errors have occurred:</p>
+     
+            <ul id="form-errors">
+                {{ $errors->first('username','<li>:message</li>')}}
+                {{ $errors->first('password','<li>:message</li>')}}
+            </ul>
+        @endif
+ 
+  L4:   The L3 way still works, or:
+        @if($errors->has())                    // or @if(count($errors)>0)
+            <ul id="form-errors">
+                <li>{{ $errors->first('username') }}</li>
+                <li>{{ $errors->first('password') }}</li>
+           </ul>
+        @endif
+ 
+Laravel creates everything for REST. Refer to individual objects like this:
+  <a href="{{ route('questions.show', ['questions'=>$question->id]) }}">
+ 
+Updating data: 
+  L3:   Questions::update($id, array(
+            'question' => Input::get('question'),
+            'solved' => Input::get('solved'),
+        ));
+ 
+  L4:   Questions::where('id','=',$id)->update(array(
+            'question' => Input::get('question'),
+            'solved' => Input::get('solved'),
+        ));
+ 
+
+Including stylesheets: 
+  L3:   {{ HTML::style('css/main.css') }}
+  L4:   <link href="{{route('home')}}/css/main.css" media="all" type="text/css" rel="stylesheet">
+
