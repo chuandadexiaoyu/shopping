@@ -193,6 +193,8 @@ Pagination:
 
 Specific fields only:
     /users?:(id,name,etc)
+or
+    /users?fields=id,name,color,picture
 
 Orders/commands/events:
     PUT /dogs/bo?command=bark
