@@ -20,6 +20,12 @@ Information from http://symfony.com/doc/2.0/book/testing.html
 http://symfony.com/doc/2.0/components/dom_crawler.html
 
 
+Forums / Ideas --------------------------------------------------
+
+Best practice for responding to AJAX request?
+http://forums.laravel.io/viewtopic.php?id=2508
+
+
 
 Important Project File Reference ------------------------
 
