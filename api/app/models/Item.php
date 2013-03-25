@@ -18,4 +18,10 @@ class Item extends BaseModel
     {
         return $this->belongsToMany('Cart', 'cart_items');
     }
+
+    public static function find($findWhat, $columns = array('*'))
+//    public static function find($findWhat, $columns = array('*'))
+    {
+        parent::find($findWhat, $columns);
+    }
 }

@@ -1,10 +1,16 @@
 Helpful links -------------------------------------------
 
+HTTP Response Codes
+http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+
 Composer Package Directory
 http://packagist.org
 
 REST API
 http://net.tutsplus.com/tutorials/php/laravel-4-a-start-at-a-restful-api/
+
+Error handling in REST
+http://satishgopal.wordpress.com/tag/rest-error-handling/
 
 Testing Laravel Models
 http://net.tutsplus.com/tutorials/php/testing-like-a-boss-in-laravel-models/
@@ -19,6 +25,14 @@ Integration Testing the DOM with a web crawler
 Information from http://symfony.com/doc/2.0/book/testing.html
 http://symfony.com/doc/2.0/components/dom_crawler.html
 
+Various development issues (blog)
+http://fideloper.com/
+http://fideloper.com/api-etag-conditional-get
+http://fideloper.com/laravel4-etag-conditional-get
+http://fideloper.com/error-handling-with-content-negotiation
+http://fideloper.com/laravel4-error-handling
+http://fideloper.com/laravel-4-application-setup-app-library-autoloading
+http://fideloper.com/laravel-4-where-to-put-bindings
 
 Forums / Ideas --------------------------------------------------
 

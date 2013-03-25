@@ -3,6 +3,9 @@
 /**
  * This class checks the ItemsController, and also the routing.
  * Everything for ItemsController should be routed through /items
+ *
+ * @group controllers
+ * @group items
  */
 class ItemsControllerTest extends TestCase 
 {
