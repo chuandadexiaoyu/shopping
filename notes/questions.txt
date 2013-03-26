@@ -1,8 +1,0 @@
-Questions
-
-What is the best practice to handle error processing with JSON?
-It sounds like the best practice is to return it in the json string. Something like:
-{"errors":["This field is required","something else"]}
-Also:
-"warnings":[]
-
