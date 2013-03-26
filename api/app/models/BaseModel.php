@@ -1,5 +1,7 @@
 <?php
 
+namespace kdb\api\app\models;
+
 class BaseModel extends Eloquent
 {
     public static function validate($data)

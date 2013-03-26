@@ -9,18 +9,24 @@
  */
 class ItemsControllerTest extends TestCase 
 {
-	public function testerWorks()
+	public function testTesterWorks()
 	{
 		$this->assertTrue(True);
-		if($this->runFailingTests){
-			$this->assertFalse(True);
-		}
 		$mock = \Mockery::mock('something');
 		$mock->shouldReceive('test')->once()->andReturn('works');
 		$this->assertEquals('works', $mock->test());
 	}
 
-	public function testIndexAsControllerAction()
+	/**
+     * @group failing 
+     */
+    public function testFailingTests()
+    {
+        $this->assertFalse(True);
+    }
+
+
+	public function testIndexCanBeOpenedAsAControllerAction()
 	{
 		$this->mock('Item')->shouldReceive('all')->once()->andReturn('{"name":"works"}');
 		$response = $this->action('GET', 'ItemsController@index');
@@ -29,14 +35,14 @@ class ItemsControllerTest extends TestCase
 		$this->assertEquals('works', $json->name);
 	}
 
-	public function testIndex()
+	public function testIndexPageWorks()
 	{
 		$this->mock('Item')->shouldReceive('all')->once()->andReturn('{"name":"works"}');
 		$json = $this->getJSON('items');
 		$this->assertEquals('works', $json->name);
 	}
 
-	public function testMockShow()
+	public function testFindPageCanBeOpenedWithAMock()
 	{
 	 	$mock = \Mockery::mock('ItemRepositoryInterface');
 		$mock->shouldReceive('find')->once()->andReturn('{"name":"works"}');
@@ -46,20 +52,10 @@ class ItemsControllerTest extends TestCase
 		$this->assertEquals('works', $json->name);
 	}
 
-	public function testMockItemShow()
+	public function testFindPageCanBeOpenedWithAnInheritedMock()
 	{
 		$this->mock('Item')->shouldReceive('find')->once()->andReturn('{"name":"works"}');
 		$json = $this->getJSON('items/1');
-		$this->assertEquals('works', $json->name);
-	}
-
-	/**
-	 * TODO: If the user sends a request for an invalid page, report the error 
-	 */
-	public function testMockItemInvalid()
-	{
-		$this->mock('Item')->shouldReceive('find')->once()->andReturn('{"name":"works"}');
-		$json = $this->getJSON('items/df');
 		$this->assertEquals('works', $json->name);
 	}
 
@@ -68,21 +64,31 @@ class ItemsControllerTest extends TestCase
 	 * (it should return a 'not found' error)
 	 * http://api.shop/items/99
 	 */
-	public function testShowInvalidItem()
+	public function testFindPageReturnsErrorMessageForInvalidItemNumber()
 	{
 		$this->mock('Item')->shouldReceive('find')->once()->andReturn(Null);
 		$response = $this->get('items/1');
-		$this->assertTrue($response->isNotFound());
-		$json = json_decode($response->getContent());
-		$this->assertEmpty($json); 
+		$this->assertError(404, 'Item 1 was not found');
 	}
+
+
+	/**
+	 * TODO: If the user sends a request for an invalid page, report the error 
+	 */
+	public function testFindPageReturnsErrorMessageForInvalidItem()
+	{
+		$this->mock('Item')->shouldReceive('find')->once()->andReturn(Null);
+        $response = $this->get('items/somethingThatDoesNotExist');
+		$this->assertError(404, 'Item somethingThatDoesNotExist was not found');
+	}
+
 
 
 	/**
 	 * Show all vendors associated with a given item
 	 * http://api.shop/items/1/vendors
 	 */
-	public function testShowItemVendors()
+	public function testItemVendorsPageCanBeShown()
 	{
 		$mockVendor = $this->mock('Vendor');
 		$mockVendor->shouldReceive('get')->once()->andReturn('{"name":"vendor works"}');
@@ -99,37 +105,34 @@ class ItemsControllerTest extends TestCase
 	 * Show vendors associated with an invalid item
 	 * http://api.shop/items/99/vendors
 	 */
-	public function testShowInvalidItemVendors()
+	public function testItemVendorsPageReturnsErrorIfInvalidItemSelected()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn(Null);
 
 		$response = $this->get('items/1/vendors');
-	 	$this->assertTrue($response->isNotFound());
+		$this->assertError(404, 'Item 1 was not found');
 	}
 
 	/**
 	 * Show vendors associated with an item where no vendors were found
 	 * @return [type] [description]
 	 */
-	public function testShowNotFoundVendors()
+	public function testItemVendorsPageReturnsEmptyListIfNoVendorsFound()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('vendors')->once()->andReturn(Null); 
 
 		$response = $this->get('items/1/vendors');
-		$this->assertFalse($response->isOK());
-		$this->assertTrue($response->isNotFound());
-		$this->assertEquals(404, $response->getStatusCode());
-		$this->assertEquals('[]', $response->getContent());
+		$this->assertError(404, 'There were no vendors for item 1');
 	}
 
 	/**
 	 * Show carts associated with an item
 	 * http://api.shop/items/10/carts
 	 */
-	public function testShowItemInCarts()
+	public function testItemCartsPageCanBeShown()
 	{
 		$mockCart = $this->mock('Cart');
 		$mockCart->shouldReceive('get')->once()->andReturn('{"name":"cart works"}');
@@ -146,30 +149,28 @@ class ItemsControllerTest extends TestCase
 	 * Show carts associated with an invalid item
 	 * http://api.shop/items/99/carts
 	 */
-	public function testShowInvalidItemCarts()
+	public function testItemCartsPageReturnsErrorIfInvalidItemSelected()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn(Null);
 
 		$response = $this->get('items/1/carts');
-	 	$this->assertTrue($response->isNotFound());
+		$this->assertError(404, 'Item 1 was not found');
 	}
 
 
 	/**
-	 * Show vendors associated with an item where no vendors were found
+	 * Show carts associated with an item where no carts were found
 	 * @return [type] [description]
 	 */
-	public function testShowNotFoundCarts()
+	public function testItemCartsPageReturnsEmptyListIfNoCartsFound()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn(Null); 
 
 		$response = $this->get('items/1/carts');
-		$this->assertFalse($response->isOK());
-		$this->assertTrue($response->isNotFound());
-		$this->assertEquals('[]', $response->getContent());
+		$this->assertError(404, 'There were no carts for item 1');
 	}
 
 	/**
@@ -179,10 +180,7 @@ class ItemsControllerTest extends TestCase
 	{
         $json = '{"name":"dragon","details":"I like dragons.",';
         $response = $this->post('items', $json);
-        $this->assertTrue($response->isClientError(), 'should return a client error');
-        $this->assertEquals(400, $response->getStatusCode());
-        $check = json_decode($response->getContent(), True);
-        $this->assertEquals('Invalid json string', $check['errors']['error']);
+		$this->assertError(400, 'Invalid json string');
 	}
 
 	public function testFailToStoreItemDueToInvalidData()

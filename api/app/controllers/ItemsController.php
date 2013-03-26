@@ -73,7 +73,7 @@ class ItemsController extends BaseController
 		if($item) {
 			return $item;
 		}
-		return $this->notFound();
+		return $this->notFound("Item " . $id . ' was not found');
 	}
 
 	/**
@@ -102,10 +102,10 @@ class ItemsController extends BaseController
 	{
 		$item = $this->items->find($id);
 		if (!$item)
-			return $this->notFound();
+			return $this->notFound("Item " . $id . ' was not found');
 		$vendors = $item->vendors();
 		if (!$vendors)
-			return $this->notFound();
+			return $this->notFound("There were no vendors for item " . $id);
 		return $vendors->get();
 	}
 
@@ -113,10 +113,10 @@ class ItemsController extends BaseController
 	{
 		$item = $this->items->find($id);
 		if (!$item)
-			return $this->notFound();
+			return $this->notFound("Item " . $id . ' was not found');
 		$carts = $item->carts();
 		if (!$carts)
-			return $this->notFound();
+			return $this->notFound("There were no carts for item " . $id);
 		return $carts->get();
 	}
 

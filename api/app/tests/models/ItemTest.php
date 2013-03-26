@@ -1,15 +1,15 @@
 <?php
 
 /**
- * This class checks the ItemsController, and also the routing.
- * Everything for ItemsController should be routed through /items
- *
+ * This class tests the item model
+ * 
  * @group models
  * @group items
  */
 class ItemTest extends TestCase 
 {
-    public function testerWorks()
+
+    public function testTesterWorks()
     {
         $this->assertTrue(True);
         $mock = \Mockery::mock('something');

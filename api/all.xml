@@ -18,7 +18,6 @@
 
     <groups>
       <exclude>
-        <group>integration</group>
         <group>failing</group>
       </exclude>
     </groups>

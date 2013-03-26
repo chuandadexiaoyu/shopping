@@ -24,7 +24,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      */
     public function createApplication()
     {
-        $this->runFailingTests = False;
     	$unitTesting = true;
         $testEnvironment = 'testing';
 
@@ -36,6 +35,19 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         $response = $this->client->getResponse();
         $this->assertTrue($response->isOk());
         $this->assertNotEmpty($response->getContent());
+    }
+
+    public function assertError($errorCode, $errorMessage)
+    {
+        $response = $this->client->getResponse();
+        $this->assertEquals($errorCode, $response->getStatusCode(), 'should return error status code');
+        $this->assertNotEmpty($response->getContent(), 'should not have empty content');
+        $this->assertNotEquals('[]', $response->getContent(), 'should not have an empty array');
+        $json = json_decode($response->getContent());
+        $this->assertNotEmpty($json, 'should return a json string');
+        $this->assertEquals($errorMessage, 
+            $json->errors[0], 
+            'should return the phrase "'.$errorMessage.'"');
     }
 
     public function getJSON($uri)

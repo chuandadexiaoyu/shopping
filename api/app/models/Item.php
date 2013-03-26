@@ -1,5 +1,8 @@
 <?php
 
+namespace kdb\api\app\models;
+
+
 class Item extends BaseModel
 {
     public static $rules = array(
@@ -19,9 +22,11 @@ class Item extends BaseModel
         return $this->belongsToMany('Cart', 'cart_items');
     }
 
-    public static function find($findWhat, $columns = array('*'))
-//    public static function find($findWhat, $columns = array('*'))
+    public static function find($findWhat)
     {
-        parent::find($findWhat, $columns);
+        // If we were passed an integer, find the primary key
+        if(is_integer($findWhat)) {
+            parent::find($findWhat, $columns);            
+        }
     }
 }

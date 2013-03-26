@@ -10,9 +10,14 @@ class BaseController extends Controller
      * <project>\api\vendor\symfony\http-foundation
      *     \Symfony\Component\HttpFoundation\Response.php
      */
-    protected static function notFound()
+    protected static function notFound($errorValue=Null)
     {
-        return Response::json()->setStatusCode(404);
+        if(!$errorValue)
+            return Response::json()->setStatusCode(404);
+
+        $json = array('errors' =>
+                    array($errorValue));
+        return Response::json($json)->setStatusCode(404);
     }
 
     protected static function badRequest($errorValue)
@@ -21,7 +26,7 @@ class BaseController extends Controller
             return Response::json()->setStatusCode(400);
 
         $json = array('errors' =>
-                    array('error' => $errorValue ));
+                    array($errorValue));
         return Response::json($json)->setStatusCode(400);
     } 
  

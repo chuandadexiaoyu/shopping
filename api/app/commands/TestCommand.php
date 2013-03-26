@@ -38,6 +38,9 @@ class TestCommand extends Command {
         $this->comment('Class: ' . get_class(Schema::getFacadeRoot()));
         $this->info('Timezone: ' . (Config::get('app.timezone')));
 
+        $text = '{"errors":["this is a test","second test"]}';
+        $json = json_decode($text);
+        var_dump($json);
     } 
 
 }

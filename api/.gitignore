@@ -4,3 +4,4 @@ composer.lock
 .DS_Store
 shopping-api.sublime-project
 shopping-api.sublime-workspace
+*~
