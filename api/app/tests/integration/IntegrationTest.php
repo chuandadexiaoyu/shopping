@@ -7,15 +7,20 @@
  */
 class IntegrationTest extends TestCase 
 {
-    public function testerWorks()
+    public function testTesterWorks()
     {
         $this->assertTrue(True);
-        if($this->runFailingTests){
-            $this->assertFalse(True);
-        }
         $mock = \Mockery::mock('something');
         $mock->shouldReceive('test')->once()->andReturn('works');
         $this->assertEquals('works', $mock->test());
+    }
+
+    /**
+     * @group failing 
+     */
+    public function testFailingTests()
+    {
+        $this->assertFalse(True);
     }
 
     public function testDBConnection()

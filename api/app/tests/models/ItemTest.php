@@ -8,6 +8,12 @@
  */
 class ItemTest extends TestCase 
 {
+    // protected $item;
+
+    public function tearDown()
+    {
+        \Mockery::close();
+    }
 
     public function testTesterWorks()
     {
@@ -17,12 +23,20 @@ class ItemTest extends TestCase
         $this->assertEquals('works', $mock->test());
     }
 
-    /**
-     * @group failing 
-     */
-    public function testFailingTests()
+    public function testFindItemByNumber()
     {
-        $this->assertFalse(True);
+        $this->prepareForTests();
+        $this->assertEquals('Windex', Item::search(1)->name);
+    }
+
+    public function testFindItemByName()
+    {
+        // TODO: Make the syntax of this much prettier
+        $this->prepareForTests();
+        $found = Item::search('name=Pencils');
+        $items = $found->get()->toArray();
+        $this->assertEquals('2', $items[0]['id']);
     }
 
 }
+

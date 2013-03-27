@@ -1,8 +1,5 @@
 <?php
 
-namespace kdb\api\app\models;
-
-
 class Item extends BaseModel
 {
     public static $rules = array(
@@ -22,11 +19,24 @@ class Item extends BaseModel
         return $this->belongsToMany('Cart', 'cart_items');
     }
 
-    public static function find($findWhat)
+    public static function validate($data)
+    {
+        return Validator::make($data, static::$rules);
+    }
+
+    public static function search($findWhat, $columns=array("*"))
     {
         // If we were passed an integer, find the primary key
         if(is_integer($findWhat)) {
-            parent::find($findWhat, $columns);            
+            return parent::find($findWhat, $columns);            
+        } else {
+            // search for the given parameters
+            $params = array();
+            parse_str($findWhat, $params);
+            // TODO: Figure out how to search for more than one parameter
+            foreach($params as $key => $value) {
+                return parent::where($key, '=', $value);
+            }
         }
     }
 }

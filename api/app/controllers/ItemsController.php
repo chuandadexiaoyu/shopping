@@ -26,7 +26,7 @@ class ItemsController extends BaseController
 	public function store()
 	{
 		$request = Input::json();
-		if (!$request) {
+		if (count($request)==0) {
 			return $this->badRequest('Invalid json string');
 		}
 

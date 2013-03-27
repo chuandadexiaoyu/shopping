@@ -20,7 +20,7 @@ class ItemsControllerTest extends TestCase
 	/**
      * @group failing 
      */
-    public function testFailingTests()
+    public function testTesterWorksForFailingTests()
     {
         $this->assertFalse(True);
     }
@@ -73,7 +73,7 @@ class ItemsControllerTest extends TestCase
 
 
 	/**
-	 * TODO: If the user sends a request for an invalid page, report the error 
+	 * Return an error message if we have an invalid item 
 	 */
 	public function testFindPageReturnsErrorMessageForInvalidItem()
 	{
@@ -118,7 +118,7 @@ class ItemsControllerTest extends TestCase
 	 * Show vendors associated with an item where no vendors were found
 	 * @return [type] [description]
 	 */
-	public function testItemVendorsPageReturnsEmptyListIfNoVendorsFound()
+	public function testItemVendorsPageReturnsErrorMessageIfNoVendorsFound()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
@@ -163,7 +163,7 @@ class ItemsControllerTest extends TestCase
 	 * Show carts associated with an item where no carts were found
 	 * @return [type] [description]
 	 */
-	public function testItemCartsPageReturnsEmptyListIfNoCartsFound()
+	public function testItemCartsPageReturnsErrorMessageIfNoCartsFound()
 	{
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
@@ -176,7 +176,7 @@ class ItemsControllerTest extends TestCase
 	/**
 	 * Fail a test due to bad json being sent. 
 	 */
-	public function testFailToStoreItemDueToBadJSON()
+	public function testFailToStoreItemDueToBadJson()
 	{
         $json = '{"name":"dragon","details":"I like dragons.",';
         $response = $this->post('items', $json);

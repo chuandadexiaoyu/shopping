@@ -113,11 +113,13 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         return $this->call('DELETE', $URI, $parameters);
     }
 
-
-    // public function loadDatabase()
-    // {
-    //     Artisan::call('migrate');
-    //     $this->seed();        
-    // }
+    protected function prepareForTests()
+    {
+        Artisan::call('migrate');
+        $this->seed();
+    }
 
 }
+
+
+
