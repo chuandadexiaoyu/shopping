@@ -24,19 +24,24 @@ class Item extends BaseModel
         return Validator::make($data, static::$rules);
     }
 
-    public static function search($findWhat, $columns=array("*"))
+    public static function search($findWhat)
     {
         // If we were passed an integer, find the primary key
         if(is_integer($findWhat)) {
-            return parent::find($findWhat, $columns);            
-        } else {
-            // search for the given parameters
-            $params = array();
-            parse_str($findWhat, $params);
-            // TODO: Figure out how to search for more than one parameter
-            foreach($params as $key => $value) {
-                return parent::where($key, '=', $value);
-            }
+            return parent::find($findWhat);            
+        } 
+
+        // search for the given parameters
+        $params = array();
+        parse_str($findWhat, $params);
+        // TODO: Figure out how to search for more than one parameter
+        $foundItems = DB::table('items');
+        foreach($params as $key => $value) {
+            $foundItems->where($key, 'like', '%'.$value.'%', 'and');
         }
+        if (count($foundItems->get())==1) {
+            return $foundItems->first();
+        }
+        return $foundItems->get();
     }
 }

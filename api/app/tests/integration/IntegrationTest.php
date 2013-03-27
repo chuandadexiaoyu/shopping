@@ -25,7 +25,8 @@ class IntegrationTest extends TestCase
 
     public function testDBConnection()
     {
-     $json = $this->getJSON('items');
-     $this->assertGreaterThan(10, count($json));
+        $this->prepareForTests();
+        $json = $this->getJSON('items');
+        $this->assertGreaterThan(10, count($json));
     }
 }
