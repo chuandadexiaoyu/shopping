@@ -111,40 +111,5 @@ class ItemTest extends TestCase
         // TODO: Similar for other data parameters
     }
 
-    /**
-     * Make sure that a particular record was found in a search
-     * @param  $itemList        List of records (found with 'where' clause)
-     * @param  $field           Name of the field to check
-     * @param  $expectedValue   Value that should be found in a record in the results
-     * @param  $errorMessage    Message to return if there was no match
-     * @return                
-     */
-    private function assertRecordFound($itemList, $field, $expectedValue, $errorMessage) 
-    {
-        if (!$this->recordFound($itemList, $field, $expectedValue)) 
-            $this->assertTrue(False, $errorMessage);
-    }
-
-    private function assertRecordNotFound($itemList, $field, $expectedValue, $errorMessage) 
-    {
-        if ($this->recordFound($itemList, $field, $expectedValue)) 
-            $this->assertTrue(False, $errorMessage);
-    }
-
-    private function recordFound($itemList, $field, $expectedValue)
-    {
-        foreach ($itemList as $item)
-            if (stripos($item->$field, $expectedValue) !== False )
-                return True;
-        return False;
-    }
-
-    private function stringInArray($arr, $expectedValue)
-    {
-        foreach($arr as $item)
-            if (stripos($item, $expectedValue) !== False)
-                return True;
-        return False;
-    }
 }
 

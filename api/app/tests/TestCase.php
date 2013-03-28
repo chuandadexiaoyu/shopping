@@ -30,14 +30,14 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     	return require __DIR__.'/../../bootstrap/start.php';
     }
 
-    public function assertOK()
+    protected function assertOK()
     {
         $response = $this->client->getResponse();
         $this->assertTrue($response->isOk());
         $this->assertNotEmpty($response->getContent());
     }
 
-    public function assertError($errorCode, $errorMessage)
+    protected function assertError($errorCode, $errorMessage)
     {
         $response = $this->client->getResponse();
         $this->assertEquals($errorCode, $response->getStatusCode(), 'should return error status code');
@@ -50,7 +50,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
             'should return the phrase "'.$errorMessage.'"');
     }
 
-    public function getJSON($uri)
+    protected function getJSON($uri)
     {
         $response = $this->get($uri);
         $this->assertOK();
@@ -77,7 +77,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      * @param  $parameters The query (GET) parameters
      * @return Illuminate\Http\Response
      */
-    public function get($URI, $parameters=array())
+    protected function get($URI, $parameters=array())
     {
         return $this->call('GET', $URI, $parameters);
     }
@@ -88,7 +88,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      * @param  $json   Raw data to be submitted (this should be json data)
      * @return Illuminate\Http\Response
      */
-    public function post($URI, $json, $parameters=array())
+    protected function post($URI, $json, $parameters=array())
     {
         return $this->call('POST', $URI, $parameters, array(), array(), $json);
     }
@@ -98,7 +98,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      * @param  $URI    The URI to receive the submitted data
      * @return Illuminate\Http\Response
      */
-    public function put($URI, $parameters=array())
+    protected function put($URI, $parameters=array())
     {
         return $this->call('PUT', $URI, $parameters);
     }
@@ -108,7 +108,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      * @param  $URI    The URI to receive the submitted data
      * @return Illuminate\Http\Response
      */
-    public function delete($URI, $parameters=array())
+    protected function delete($URI, $parameters=array())
     {
         return $this->call('DELETE', $URI, $parameters);
     }
@@ -117,6 +117,50 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     {
         Artisan::call('migrate');
         $this->seed();
+    }
+
+    /**
+     * Make sure that a particular record was found in a search
+     * @param  $itemList        List of records (found with 'where' clause)
+     * @param  $field           Name of the field to check
+     * @param  $expectedValue   Value that should be found in a record in the results
+     * @param  $errorMessage    Message to return if there was no match
+     * @return                
+     */
+    protected function assertRecordFound($itemList, $field, $expectedValue, $errorMessage) 
+    {
+        if (!$this->recordFound($itemList, $field, $expectedValue)) 
+            $this->assertTrue(False, $errorMessage);
+    }
+
+    protected function assertRecordNotFound($itemList, $field, $expectedValue, $errorMessage) 
+    {
+        if ($this->recordFound($itemList, $field, $expectedValue)) 
+            $this->assertTrue(False, $errorMessage);
+    }
+
+
+    protected function stringInArray($arr, $expectedValue)
+    {
+        foreach($arr as $item)
+            if (stripos($item, $expectedValue) !== False)
+                return True;
+        return False;
+    }
+
+    //**********************************************************************************
+    // Private helper functions
+    
+
+    private function recordFound($itemList, $field, $expectedValue)
+    {
+        if( is_object($itemList))
+            return (stripos($itemList->$field, $expectedValue) !== False);
+
+        foreach ($itemList as $item)
+            if (stripos($item->$field, $expectedValue) !== False )
+                return True;
+        return False;
     }
 
 }

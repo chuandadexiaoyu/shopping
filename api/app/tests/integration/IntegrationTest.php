@@ -35,9 +35,17 @@ class IntegrationTest extends TestCase
         $this->prepareForTests();
         $json = $this->getJSON('items/1');
         $this->assertEquals(1, count($json));
+        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex'); 
+        $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil'); 
+        // $json = $this->getJSON('items?name=pencil');
+        // $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil'); 
+        // $json = $this->getJSON('items', array('name'=>'pencil'));
 
         // TODO: Figure out how to search for an object
         return; 
+        $json = $this->getJSON('items', array('name'=>'pencil'));
+        $json = $this->getJSON('items?name=pencil');
+        $this->assertRecordFound($json, 'name', 'Pencil', 'should find pencil'); 
         $json = $this->getJSON('items?name=pencil');
         $json = $this->getJSON('items/name=pencil');
     }

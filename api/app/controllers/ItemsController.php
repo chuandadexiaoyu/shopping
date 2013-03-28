@@ -15,6 +15,8 @@ class ItemsController extends BaseController
 	 */
 	public function index()
 	{
+		// var_dump(Input::all());
+		
 		if (count(Input::all())==0)
 			return $this->items->all();
 

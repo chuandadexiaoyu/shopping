@@ -21,7 +21,7 @@ Testing groups defined
 These groups have been defined in the app:
 
 Overall groups:
-    @group interface    interface components (interactivity of entire project)
+    @group integration  integration components (interactivity of entire project)
     @group failing      failing tests
 
 Type groups:
