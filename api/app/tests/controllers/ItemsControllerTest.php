@@ -45,7 +45,7 @@ class ItemsControllerTest extends TestCase
 	public function testFindPageCanBeOpenedWithAMock()
 	{
 	 	$mock = \Mockery::mock('ItemRepositoryInterface');
-		$mock->shouldReceive('find')->once()->andReturn('{"name":"works"}');
+		$mock->shouldReceive('search')->once()->andReturn('{"name":"works"}');
 		App::instance('ItemRepositoryInterface', $mock);
 
 		$json = $this->getJSON('items/1');
@@ -54,7 +54,7 @@ class ItemsControllerTest extends TestCase
 
 	public function testFindPageCanBeOpenedWithAnInheritedMock()
 	{
-		$this->mock('Item')->shouldReceive('find')->once()->andReturn('{"name":"works"}');
+		$this->mock('Item')->shouldReceive('search')->once()->andReturn('{"name":"works"}');
 		$json = $this->getJSON('items/1');
 		$this->assertEquals('works', $json->name);
 	}
@@ -66,7 +66,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testFindPageReturnsErrorMessageForInvalidItemNumber()
 	{
-		$this->mock('Item')->shouldReceive('find')->once()->andReturn(Null);
+		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
 		$response = $this->get('items/1');
 		$this->assertError(404, 'Item 1 was not found');
 	}
@@ -77,7 +77,7 @@ class ItemsControllerTest extends TestCase
 	 */
 	public function testFindPageReturnsErrorMessageForInvalidItem()
 	{
-		$this->mock('Item')->shouldReceive('find')->once()->andReturn(Null);
+		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
         $response = $this->get('items/somethingThatDoesNotExist');
 		$this->assertError(404, 'Item somethingThatDoesNotExist was not found');
 	}
@@ -94,7 +94,7 @@ class ItemsControllerTest extends TestCase
 		$mockVendor->shouldReceive('get')->once()->andReturn('{"name":"vendor works"}');
 
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
+		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('vendors')->once()->andReturn($mockVendor); 
 
 		$json = $this->getJSON('items/1/vendors');
@@ -108,7 +108,7 @@ class ItemsControllerTest extends TestCase
 	public function testItemVendorsPageReturnsErrorIfInvalidItemSelected()
 	{
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn(Null);
+		$mockItem->shouldReceive('search')->once()->andReturn(Null);
 
 		$response = $this->get('items/1/vendors');
 		$this->assertError(404, 'Item 1 was not found');
@@ -121,7 +121,7 @@ class ItemsControllerTest extends TestCase
 	public function testItemVendorsPageReturnsErrorMessageIfNoVendorsFound()
 	{
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
+		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('vendors')->once()->andReturn(Null); 
 
 		$response = $this->get('items/1/vendors');
@@ -138,7 +138,7 @@ class ItemsControllerTest extends TestCase
 		$mockCart->shouldReceive('get')->once()->andReturn('{"name":"cart works"}');
 
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
+		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn($mockCart); 
 
 		$json = $this->getJSON('items/1/carts');
@@ -152,7 +152,7 @@ class ItemsControllerTest extends TestCase
 	public function testItemCartsPageReturnsErrorIfInvalidItemSelected()
 	{
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn(Null);
+		$mockItem->shouldReceive('search')->once()->andReturn(Null);
 
 		$response = $this->get('items/1/carts');
 		$this->assertError(404, 'Item 1 was not found');
@@ -166,7 +166,7 @@ class ItemsControllerTest extends TestCase
 	public function testItemCartsPageReturnsErrorMessageIfNoCartsFound()
 	{
 		$mockItem = $this->mock('Item');
-		$mockItem->shouldReceive('find')->once()->andReturn($mockItem);
+		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn(Null); 
 
 		$response = $this->get('items/1/carts');

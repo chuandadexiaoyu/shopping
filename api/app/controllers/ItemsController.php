@@ -15,7 +15,10 @@ class ItemsController extends BaseController
 	 */
 	public function index()
 	{
-		return $this->items->all();
+		if (count(Input::all())==0)
+			return $this->items->all();
+
+		return $this->show(Input::all());
 	}
 
 	/**
@@ -64,16 +67,16 @@ class ItemsController extends BaseController
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  int  $params
 	 * @return Response
 	 */
-	public function show($id)
+	public function show($params)
 	{
-		$item = $this->items->find($id);
+		$item = $this->items->search($params);
 		if($item) {
 			return $item;
 		}
-		return $this->notFound("Item " . $id . ' was not found');
+		return $this->notFound("Item " . $params . ' was not found');
 	}
 
 	/**
@@ -100,7 +103,7 @@ class ItemsController extends BaseController
 
 	public function vendors($id)
 	{
-		$item = $this->items->find($id);
+		$item = $this->items->search($id);
 		if (!$item)
 			return $this->notFound("Item " . $id . ' was not found');
 		$vendors = $item->vendors();
@@ -111,7 +114,7 @@ class ItemsController extends BaseController
 
 	public function carts($id)
 	{
-		$item = $this->items->find($id);
+		$item = $this->items->search($id);
 		if (!$item)
 			return $this->notFound("Item " . $id . ' was not found');
 		$carts = $item->carts();

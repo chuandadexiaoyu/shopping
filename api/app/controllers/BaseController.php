@@ -15,8 +15,7 @@ class BaseController extends Controller
         if(!$errorValue)
             return Response::json()->setStatusCode(404);
 
-        $json = array('errors' =>
-                    array($errorValue));
+        $json = array('errors' => array($errorValue));
         return Response::json($json)->setStatusCode(404);
     }
 
@@ -25,8 +24,7 @@ class BaseController extends Controller
         if(!$errorValue)
             return Response::json()->setStatusCode(400);
 
-        $json = array('errors' =>
-                    array($errorValue));
+        $json = array('errors' => array($errorValue));
         return Response::json($json)->setStatusCode(400);
     } 
  

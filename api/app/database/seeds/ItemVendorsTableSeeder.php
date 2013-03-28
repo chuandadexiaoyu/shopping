@@ -24,14 +24,6 @@ class ItemVendorsTableSeeder extends Seeder {
                 'updated_at' => new DateTime(),
             ),
             array(
-                'item_id'   =>  5,
-                'vendor_id' =>  1,
-                'confirmed' =>  0,
-                'last_known_price' => Null   ,
-                'created_at' => new DateTime(),
-                'updated_at' => new DateTime(),
-            ), 
-            array(
                 'item_id'   =>  7,
                 'vendor_id' => 16,
                 'confirmed' =>  1,

@@ -23,10 +23,22 @@ class IntegrationTest extends TestCase
         $this->assertFalse(True);
     }
 
-    public function testDBConnection()
+    public function testDBConnectionWorks()
     {
         $this->prepareForTests();
         $json = $this->getJSON('items');
         $this->assertGreaterThan(10, count($json));
+    }
+
+    public function testSearchForItem()
+    {
+        $this->prepareForTests();
+        $json = $this->getJSON('items/1');
+        $this->assertEquals(1, count($json));
+
+        // TODO: Figure out how to search for an object
+        return; 
+        $json = $this->getJSON('items?name=pencil');
+        $json = $this->getJSON('items/name=pencil');
     }
 }

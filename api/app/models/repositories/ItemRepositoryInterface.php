@@ -3,7 +3,7 @@
 Interface ItemRepositoryInterface
 {
     public function all();
-    public function find($id);
+    public function search($forWhat);
 
     public function validate($data);
 
