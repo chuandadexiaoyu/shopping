@@ -2,10 +2,13 @@
 
 class ItemsController extends BaseController 
 {
+    protected $items;
+//    protected $input;         Can we include this in the constructor?
 
     public function __construct(ItemRepositoryInterface $items)
     {
         $this->items = $items;
+        // $this->input = $input;
     }
 
     /**
@@ -74,10 +77,17 @@ class ItemsController extends BaseController
     public function show($params)
     {
         $item = $this->items->search($params);
-        if($item) {
+
+        if (!$item)
+            return $this->notFound("Item " . $params . ' was not found');
+
+        if(is_string($item))
+            return($item);
+
+        if(is_object($item) && count($item)>0)
             return $item;
-        }
-        return $this->notFound("Item " . $params . ' was not found');
+
+        return $this->notFound('no items found');
     }
 
     /**

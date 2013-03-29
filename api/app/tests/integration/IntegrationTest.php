@@ -48,4 +48,13 @@ class IntegrationTest extends TestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
     }
 
+    public function testFailOnSearchForItemByTextOnly()
+    {
+        $this->markTestIncomplete();
+        $response = $this->get('items/somethingThatDoesNotExist');
+        var_dump($response->getContent());
+        $this->assertError(404, 'Item somethingThatDoesNotExist was not found');
+    }
+
+
 }

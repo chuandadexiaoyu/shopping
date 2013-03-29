@@ -2,6 +2,11 @@
 
 use Mockery\Mockery;
 
+define('JSON_WORKS',        '{"name":"works"}');
+define('JSON_ITEM_WORKS',   '{"name":"item works"}');
+define('JSON_VENDOR_WORKS', '{"name":"vendor works"}');
+define('JSON_CART_WORKS',   '{"name":"cart works"}');
+
 class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
     public function tearDown()
@@ -9,12 +14,33 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         \Mockery::close();
     }
 
-    public function mock($class)
+    protected function getProviderMock($className, $function, $result=Null)
     {
-        $repo = $class . 'RepositoryInterface';
+        $dbResult = $this->mockDBResult($result);
+        $mock = $this->mock($className)->shouldReceive($function)->once()->andReturn($dbResult);
+        return $mock;
+    }
+
+    protected function mock($className)
+    {
+        $repo = $className . 'RepositoryInterface';
         $mock = \Mockery::mock($repo);
         App::instance($repo, $mock);        
         return $mock;
+    }
+
+    protected function mockDBResult($resultJSON)
+    {
+        $result = \Mockery::mock('Illuminate\Database\Eloquent\Collection');
+
+        if(!$resultJSON) {
+            $result->shouldReceive('count')->once()->andReturn(0);
+            return $result;
+        }
+        $resultCount = count(json_decode($resultJSON));
+        $result->shouldReceive('count')->once()->andReturn($resultCount);
+        $result->shouldReceive('toJson')->andReturn($resultJSON);
+        return $result;
     }
 
     /**
