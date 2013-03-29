@@ -26,7 +26,9 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     {
     	$unitTesting = true;
         $testEnvironment = 'testing';
-
+        if(in_array('foo', $_SERVER['argv'])) {
+            $testEnvironment = 'foo';
+        }
     	return require __DIR__.'/../../bootstrap/start.php';
     }
 
@@ -40,11 +42,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     protected function assertError($errorCode, $errorMessage)
     {
         $response = $this->client->getResponse();
+        $content = $response->getContent();
         $this->assertEquals($errorCode, $response->getStatusCode(), 'should return error status code');
-        $this->assertNotEmpty($response->getContent(), 'should not have empty content');
-        $this->assertNotEquals('[]', $response->getContent(), 'should not have an empty array');
-        $json = json_decode($response->getContent());
+        $this->assertNotEmpty($content, 'should not have empty content');
+        $this->assertNotEquals('[]', $content, 'should not have an empty array');
+        $json = json_decode($content);
         $this->assertNotEmpty($json, 'should return a json string');
+
+        // var_dump($content);
+        // var_dump($json); //->errors()->all(':message'));
         $this->assertEquals($errorMessage, 
             $json->errors[0], 
             'should return the phrase "'.$errorMessage.'"');
@@ -148,17 +154,32 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         return False;
     }
 
+
+
+
     //**********************************************************************************
     // Private helper functions
     
 
-    private function recordFound($itemList, $field, $expectedValue)
+    /**
+     * Determines whether a given substring was found in a string, object, or array
+     * (this is a case insensitive search)
+     * 
+     * @param  mixed  $haystack     Item (or list of items) to search in 
+     * @param  string $field        Name of the field to search for values
+     * @param  string $needle       value to search for
+     * @return boolean
+     */
+    private function recordFound($haystack, $field, $needle)
     {
-        if( is_object($itemList))
-            return (stripos($itemList->$field, $expectedValue) !== False);
+        // if we were given a stdClass object, check to see if the value is in it
+        if(is_object($haystack) and get_class($haystack) === 'stdClass')
+            return (stripos($haystack->$field, $needle) !== False);
 
-        foreach ($itemList as $item)
-            if (stripos($item->$field, $expectedValue) !== False )
+        // If we were given an array or collection object, look through
+        // each item to find the value
+        foreach ($haystack as $item)
+            if (stripos($item->$field, $needle) !== False )
                 return True;
         return False;
     }

@@ -20,6 +20,7 @@ Route::get('/user/logout', array('as'=>'logout', 'uses'=>'UsersController@getLog
 
 Route::get('/items/{item}/vendors', array('uses'=>'ItemsController@vendors'));
 Route::get('/items/{item}/carts', array('uses'=>'ItemsController@carts'));
+Route::get('/items/find', array('uses'=>'ItemsController@test'));
 
 Route::post('/user/login', array('before'=>'csrf', 'uses'=>'UsersController@postLogin'));
 

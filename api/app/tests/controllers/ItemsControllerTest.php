@@ -183,8 +183,12 @@ class ItemsControllerTest extends TestCase
 		$this->assertError(400, 'Invalid json string');
 	}
 
-	public function testFailToStoreItemDueToInvalidData()
+	public function testFailToStoreItemDueToInvalidDetails()
 	{
+  //       $json = '{"name":"Joel","details":"d"}';
+  //       $response = $this->post('items', $json);
+		// $this->assertError(400, 'details');
+
 		// $mock = \Mockery::mock('Validator');
 		// $mock->shouldReceive('make')->once()->andReturn(False);
 

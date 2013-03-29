@@ -34,7 +34,6 @@ class ItemTest extends TestCase
         // Search for a letter
         $item1 = $item->search('name=c');
         $this->assertGreaterThan(4, count($item1), 'should have more than 4 with "c"');
-
         $this->assertRecordFound($item1, 'name', 'Pencils', 
             'should have found Pencils when searching for "c"');
         $this->assertRecordFound($item1, 'name', 'chair', 
@@ -44,7 +43,6 @@ class ItemTest extends TestCase
         $item2 = $item->search('sku=s&name=c');
         $this->assertLessThan(count($item1), count($item2), 
             'should have fewer results for both sku and name than with just name');
-
         $this->assertRecordFound($item2, 'name', 'Pencils', 
             'should have found Pencils when searching for "c"');
         $this->assertRecordNotFound($item2, 'name', 'chair', 
@@ -94,22 +92,69 @@ class ItemTest extends TestCase
         $this->assertEquals(0, count($carts), 'should have 0 carts for item #5');
     }
 
-    public function testCanValidateFailsForInvalidDetails()
+    public function testValidateFailsForInvalidDetails()
     {
-        // $this->prepareForTests();
         $item = new Item;
 
         // Do not send Name field, just (too short) details
         $data = array('details' => 'a');
         $validator = $item->validate($data);
-        $this->assertTrue($validator->fails(), 'should fail for missing items');
+        $this->assertTrue($validator->fails(), 'should fail for missing item');
         $errors = $validator->errors()->all(':message');
         $this->assertEquals(2, count($errors), 'should fail 2 tests');
         $this->assertTrue($this->stringInArray($errors, 'required'), 'should return field required message');
         $this->assertTrue($this->stringInArray($errors, 'between'), 'should return character limit message');
-
-        // TODO: Similar for other data parameters
     }
+
+    public function testValidateFailsForInvalidSKU()
+    {
+        $item = new Item;
+
+        // Send (valid) name field, and (too short) sku
+        $data = array('name'=>'joel', 'sku'=>'a');
+        $validator = $item->validate($data);
+        $this->assertTrue($validator->fails(), 'should fail for short sku');
+        $errors = $validator->errors()->all(':message');
+        $this->assertEquals(1, count($errors), 'should fail 1 test');
+        $this->assertTrue($this->stringInArray($errors, 'between'), 'should return character limit message');
+    }
+
+    public function testValidateSucceedsForValidName()
+    {
+        $item = new Item;
+
+        // Send (valid) name field
+        $data = array('name'=>'joel');
+        $validator = $item->validate($data);
+        $this->assertTrue($validator->passes(), 'should succeed for valid name');
+        $errors = $validator->errors()->all(':message');
+        $this->assertEquals(0, count($errors), 'should not have any errors');
+    }
+
+    public function testValidateSucceedsIfPassedValidObjectData()
+    {
+        $item = new Item;
+        $data = new \Symfony\Component\HttpFoundation\ParameterBag(array('name'=>'joel'));
+        $validator = $item->validate($data);
+        $this->assertTrue($validator->passes());
+    }
+
+    public function testValidateFailsIfPassedInvalidObjectData()
+    {
+        $item = new Item;
+        $data = new \Symfony\Component\HttpFoundation\ParameterBag(array('name'=>'j'));
+        $validator = $item->validate($data);
+        $this->assertFalse($validator->passes());
+        $errors = $validator->errors()->all(':message');
+        $this->assertEquals(1, count($errors), 'should fail 1 test');
+        $this->assertTrue($this->stringInArray($errors, 'characters'), 'should return character limit message');
+    }
+
+    public function testTesterWorksAgain()
+    {
+        $this->assertTrue(True);
+    }
+
 
 }
 

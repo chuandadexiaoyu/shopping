@@ -11,3 +11,5 @@
 |
 */
 
+// Artisan::add( new RoutesCommand($app->router->getRoutes()->all()) );
+// Artisan::add( new TestCommand() );

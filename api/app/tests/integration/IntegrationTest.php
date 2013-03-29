@@ -7,46 +7,45 @@
  */
 class IntegrationTest extends TestCase 
 {
-    public function testTesterWorks()
+    public function setUp()
     {
-        $this->assertTrue(True);
-        $mock = \Mockery::mock('something');
-        $mock->shouldReceive('test')->once()->andReturn('works');
-        $this->assertEquals('works', $mock->test());
-    }
-
-    /**
-     * @group failing 
-     */
-    public function testFailingTests()
-    {
-        $this->assertFalse(True);
+        parent::setUp();
+        $this->prepareForTests();
     }
 
     public function testDBConnectionWorks()
     {
-        $this->prepareForTests();
         $json = $this->getJSON('items');
         $this->assertGreaterThan(10, count($json));
     }
 
-    public function testSearchForItem()
+    public function testFindAllItems()
     {
-        $this->prepareForTests();
+        $json = $this->getJSON('items');
+        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex'); 
+        $this->assertRecordFound($json, 'name', 'pencil', 'should find pencil'); 
+    }
+
+    public function testFindOneItem()
+    {
         $json = $this->getJSON('items/1');
         $this->assertEquals(1, count($json));
-        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex'); 
-        $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil'); 
-        // $json = $this->getJSON('items?name=pencil');
-        // $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil'); 
-        // $json = $this->getJSON('items', array('name'=>'pencil'));
-
-        // TODO: Figure out how to search for an object
-        return; 
-        $json = $this->getJSON('items', array('name'=>'pencil'));
-        $json = $this->getJSON('items?name=pencil');
-        $this->assertRecordFound($json, 'name', 'Pencil', 'should find pencil'); 
-        $json = $this->getJSON('items?name=pencil');
-        $json = $this->getJSON('items/name=pencil');
+        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for item 1'); 
+        $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for item 1'); 
     }
+
+    public function testSearchForItemByName()
+    {
+        $json = $this->getJSON('items/name=x');
+        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items/name=w'); 
+        $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items/name=w'); 
+    }
+
+    public function testSearchForItemByNameInQuery()
+    {
+        $json = $this->getJSON('items?name=x');
+        $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items?name=w'); 
+        $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
+    }
+
 }

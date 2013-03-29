@@ -3,126 +3,128 @@
 class ItemsController extends BaseController 
 {
 
-	public function __construct(ItemRepositoryInterface $items)
-	{
-		$this->items = $items;
-	}
+    public function __construct(ItemRepositoryInterface $items)
+    {
+        $this->items = $items;
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		// var_dump(Input::all());
-		
-		if (count(Input::all())==0)
-			return $this->items->all();
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        if (count(Input::all())==0)
+            return $this->items->all();
 
-		return $this->show(Input::all());
-	}
+        return $this->show(Input::all());
+    }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		$request = Input::json();
-		if (count($request)==0) {
-			return $this->badRequest('Invalid json string');
-		}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
+        $request = Input::json();
+        if (count($request)==0) {
+            return $this->badRequest('Invalid json string');
+        }
 
-		// attempt to validate
-	    $validation = $this->items->validate(Input::all());
-	    if (!$validation->passes()) {
-	    	return $this->badRequest($validation->getMessageBag()->all(':message'));
-	    }
-	    // $this->items->create(array(
-	    // 	'name' => Input::get('name'),
-	    // 	'details' => Input
-	    // ));
+        // attempt to validate
+        var_dump(Input::json());
+        $validator = $this->items->validate(Input::json());
+        if (!$validator->passes()) {
+            var_dump($validator->messages()->all(':message'));
+            // return $this->badRequest($validation->getMessageBag()->all(':message'));
+        } else {
+            var_dump($request);
+        }
+        // $this->items->create(array(
+        //  'name' => Input::get('name'),
+        //  'details' => Input
+        // ));
 
-	    // if ($validation->passes()) {
-	    //         Question::create(array(
-	    //                 'question' => Input::get('question'),
-	    //                 'user_id' => Auth::user()->id
-	    //         ));
-	    //         return Redirect::route('home')
-	    //                 ->with('message', 'Your question has been posted');
-	    // }
-	    // return Redirect::route('home')
-	    //         ->withErrors($validation)
-	    //         ->withInput();
+        // if ($validation->passes()) {
+        //         Question::create(array(
+        //                 'question' => Input::get('question'),
+        //                 'user_id' => Auth::user()->id
+        //         ));
+        //         return Redirect::route('home')
+        //                 ->with('message', 'Your question has been posted');
+        // }
+        // return Redirect::route('home')
+        //         ->withErrors($validation)
+        //         ->withInput();
 
-		
-		// save the data
+        
+        // save the data
 
-		// return the resulting record
-//		var_dump($request);
+        // return the resulting record
+//      var_dump($request);
 
-		return Response::json();
-	}
+        return Response::json();
+    }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $params
-	 * @return Response
-	 */
-	public function show($params)
-	{
-		$item = $this->items->search($params);
-		if($item) {
-			return $item;
-		}
-		return $this->notFound("Item " . $params . ' was not found');
-	}
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $params
+     * @return Response
+     */
+    public function show($params)
+    {
+        $item = $this->items->search($params);
+        if($item) {
+            return $item;
+        }
+        return $this->notFound("Item " . $params . ' was not found');
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        //
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
 
-	public function vendors($id)
-	{
-		$item = $this->items->search($id);
-		if (!$item)
-			return $this->notFound("Item " . $id . ' was not found');
-		$vendors = $item->vendors();
-		if (!$vendors)
-			return $this->notFound("There were no vendors for item " . $id);
-		return $vendors->get();
-	}
+    public function vendors($id)
+    {
+        $item = $this->items->search($id);
+        if (!$item)
+            return $this->notFound("Item " . $id . ' was not found');
+        $vendors = $item->vendors();
+        if (!$vendors)
+            return $this->notFound("There were no vendors for item " . $id);
+        return $vendors->get();
+    }
 
-	public function carts($id)
-	{
-		$item = $this->items->search($id);
-		if (!$item)
-			return $this->notFound("Item " . $id . ' was not found');
-		$carts = $item->carts();
-		if (!$carts)
-			return $this->notFound("There were no carts for item " . $id);
-		return $carts->get();
-	}
+    public function carts($id)
+    {
+        $item = $this->items->search($id);
+        if (!$item)
+            return $this->notFound("Item " . $id . ' was not found');
+        $carts = $item->carts();
+        if (!$carts)
+            return $this->notFound("There were no carts for item " . $id);
+        return $carts->get();
+    }
 
 }
