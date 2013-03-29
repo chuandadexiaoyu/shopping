@@ -28,7 +28,7 @@ class ItemsControllerTest extends TestCase
 
 	public function testIndexCanBeOpenedAsAControllerAction()
 	{
-		$this->mock('Item')->shouldReceive('all')->once()->andReturn('{"name":"works"}');
+		$this->mock('Item')->shouldReceive('search')->once()->andReturn('{"name":"works"}');
 		$response = $this->action('GET', 'ItemsController@index');
 		$this->assertOK();
 		$json = json_decode($response->getContent());
@@ -37,7 +37,7 @@ class ItemsControllerTest extends TestCase
 
 	public function testIndexPageWorks()
 	{
-		$this->mock('Item')->shouldReceive('all')->once()->andReturn('{"name":"works"}');
+		$this->mock('Item')->shouldReceive('search')->once()->andReturn('{"name":"works"}');
 		$json = $this->getJSON('items');
 		$this->assertEquals('works', $json->name);
 	}

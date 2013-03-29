@@ -38,7 +38,9 @@ class Item extends BaseModel
 
         // TODO: Parse and validate parameters
         // TODO: Validate it should return a failure if 2 of the same parameter
-        if(is_array($findWhat)) {
+        if (!is_array($findWhat) and method_exists($findWhat, 'all')) {
+            $params = $findWhat->all();
+        } elseif (is_array($findWhat)) {
             $params = $findWhat;
         } else {
             $params = array();
