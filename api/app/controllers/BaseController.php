@@ -2,7 +2,6 @@
 
 class BaseController extends Controller 
 {
-
     /**
      * Returns a Not Found error (via json)
      * 
@@ -21,11 +20,14 @@ class BaseController extends Controller
 
     protected static function badRequest($errorValue)
     {
-        if(!$errorValue)
-            return Response::json()->setStatusCode(400);
-
         $json = array('errors' => array($errorValue));
         return Response::json($json)->setStatusCode(400);
+    } 
+ 
+    protected static function OK($message)
+    {
+        $json = array($message);
+        return Response::json($json)->setStatusCode(200);
     } 
  
 }

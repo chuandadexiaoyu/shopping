@@ -47,6 +47,13 @@ class Item extends BaseModel
             parse_str($findWhat, $params);
         }
 
+        // At this point, we should have key, value parameter pairs. 
+        // If we don't, return an empty set.
+        foreach($params as $key => $value) {
+            if (!$value)
+                return parent::find(0);
+        }
+
         // search for submitted parameters
         // TODO: Figure out how to use other parameters: =, >=, <=, >, < 
         $table = $this->getTable();

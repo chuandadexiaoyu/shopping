@@ -23,6 +23,9 @@ class ItemTest extends TestCase
         $this->assertEquals('works', $mock->test());
     }
 
+    /**
+     * @group db
+     */
     public function testSearchForItem()
     {
         $this->prepareForTests();
@@ -54,6 +57,32 @@ class ItemTest extends TestCase
         $this->assertRecordFound($items, 'name', 'pencils', 'should find Pencils from search array');
     }
 
+    /**
+     * @group db
+     */
+    public function testSearchFailsIfPassedInvalidParams()
+    {
+        $this->prepareForTests();
+        $item = new Item;
+        $result = $item->search('invalidSearchParameter');
+        $this->assertEquals(0, count($result));
+    }
+
+    // public function testSearchFailsIfPassedInvalidFieldNames()
+    // {
+    //     // TODO: extract key words from the search string,
+    //     // eg count=x&offset=y; these should be OK
+    //     // dragon=x should return an empty string.
+    //     $this->markTestIncomplete();
+    //     $this->prepareForTests();
+    //     $item = new Item;
+    //     $result = $item->search('dragon=4');
+    //     $this->assertEquals(0, count($result));
+    // }
+
+    /**
+     * @group db
+     */
     public function testCanGetVendors()
     {
         $this->prepareForTests();
@@ -74,6 +103,9 @@ class ItemTest extends TestCase
         $this->assertEquals(0, count($vendors), 'should have 0 vendors for item #5');
     }
 
+    /**
+     * @group db
+     */
     public function testCanGetCarts()
     {
         $this->prepareForTests();
@@ -102,8 +134,10 @@ class ItemTest extends TestCase
         $this->assertTrue($validator->fails(), 'should fail for missing item');
         $errors = $validator->errors()->all(':message');
         $this->assertEquals(2, count($errors), 'should fail 2 tests');
-        $this->assertTrue($this->stringInArray($errors, 'required'), 'should return field required message');
-        $this->assertTrue($this->stringInArray($errors, 'between'), 'should return character limit message');
+        $this->assertTrue($this->substrInArray($errors, 'required'), 
+            'should return field required message');
+        $this->assertTrue($this->substrInArray($errors, 'between'), 
+            'should return character limit message');
     }
 
     public function testValidateFailsForInvalidSKU()
@@ -116,7 +150,8 @@ class ItemTest extends TestCase
         $this->assertTrue($validator->fails(), 'should fail for short sku');
         $errors = $validator->errors()->all(':message');
         $this->assertEquals(1, count($errors), 'should fail 1 test');
-        $this->assertTrue($this->stringInArray($errors, 'between'), 'should return character limit message');
+        $this->assertTrue($this->substrInArray($errors, 'between'), 
+            'should return character limit message');
     }
 
     public function testValidateSucceedsForValidName()
@@ -147,7 +182,8 @@ class ItemTest extends TestCase
         $this->assertFalse($validator->passes());
         $errors = $validator->errors()->all(':message');
         $this->assertEquals(1, count($errors), 'should fail 1 test');
-        $this->assertTrue($this->stringInArray($errors, 'characters'), 'should return character limit message');
+        $this->assertTrue($this->substrInArray($errors, 'characters'), 
+            'should return character limit message');
     }
 
     public function testTesterWorksAgain()

@@ -85,7 +85,7 @@ class ItemsController extends BaseController
             return($item);
 
         if(is_object($item) && count($item)>0)
-            return $item;
+            return $item->toJson();
 
         return $this->notFound('no items found');
     }
@@ -109,7 +109,8 @@ class ItemsController extends BaseController
      */
     public function destroy($id)
     {
-        //
+        if ($this->items->delete($id))
+        	return ;
     }
 
     public function vendors($id)

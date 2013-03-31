@@ -23,12 +23,19 @@ These groups have been defined in the app:
 Overall groups:
     @group integration  integration components (interactivity of entire project)
     @group failing      failing tests
+    @group db           interact with database (slow)
 
 Type groups:
-    @group models
+    @group base         Base objects only (eg, BaseController, BaseModel, etc.)
+    @group models       
     @group controllers
 
 Object groups:
     @group items
 
     
+    
+Incomplete tests
+-------------------
+
+Use $this->markTestIncomplete();

@@ -4,6 +4,7 @@
 
 /**
  * @group integration
+ * @group db
  */
 class IntegrationTest extends TestCase 
 {
@@ -41,6 +42,14 @@ class IntegrationTest extends TestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items/name=w'); 
     }
 
+    // TODO: Find items with paging
+    // public function testFindItemsWithPaging()
+    // {
+    //     $json = $this->get('items/offset=5&count=5');
+    //     $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items?name=w'); 
+    //     $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
+    // }
+
     public function testSearchForItemByNameInQuery()
     {
         $json = $this->getJSON('items?name=x');
@@ -50,11 +59,15 @@ class IntegrationTest extends TestCase
 
     public function testFailOnSearchForItemByTextOnly()
     {
-        $this->markTestIncomplete();
         $response = $this->get('items/somethingThatDoesNotExist');
-        var_dump($response->getContent());
         $this->assertError(404, 'Item somethingThatDoesNotExist was not found');
     }
 
-
+    // TODO: Fail on searches for items with bad field names
+    // public function testFailOnSearchForItemWithBadFieldName()
+    // {
+    //     $response = $this->get('items/invalidFieldName=someText');
+    //     $this->assertError(404, 'Field invalidFieldName does not exist in table items');
+    // }
+    
 }

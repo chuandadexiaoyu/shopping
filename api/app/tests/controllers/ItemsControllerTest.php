@@ -9,24 +9,10 @@
  */
 class ItemsControllerTest extends TestCase 
 {
-	public function testTesterWorks()
-	{
-		$this->assertTrue(True);
-		$mock = \Mockery::mock('something');
-		$mock->shouldReceive('test')->once()->andReturn('works');
-		$this->assertEquals('works', $mock->test());
-	}
 
-	/**
-     * @group failing 
-     */
-    public function testTesterWorksForFailingTests()
-    {
-        $this->assertFalse(True);
-    }
-
-
-	public function testIndexCanBeOpenedAsAControllerAction()
+// Tests for the index page ------------------------------------------------
+	
+	public function testIndexPageCanBeOpenedAsAControllerAction()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
 		$response = $this->action('GET', 'ItemsController@index');
@@ -35,13 +21,22 @@ class ItemsControllerTest extends TestCase
 		$this->assertEquals('works', $json->name);
 	}
 
-	public function testIndexPageWorks()
+	public function testIndexPageCanBeOpenedWithUri()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
 		$json = $this->getJSON('items');
 		$this->assertEquals('works', $json->name);
 	}
 
+	public function testEmptyIndexPageReturnsErrorString()
+	{
+		$this->getProviderMock('Item', 'search', Null);
+		$response = $this->get('items');
+		$this->assertError(404, 'no items found');
+	}
+
+// Tests for the find page -------------------------------------------------
+	
 	public function testFindPageCanBeOpenedWithAMock()
 	{
 	 	$mock = \Mockery::mock('ItemRepositoryInterface');
@@ -57,13 +52,6 @@ class ItemsControllerTest extends TestCase
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
 		$json = $this->getJSON('items/1');
 		$this->assertEquals('works', $json->name);
-	}
-
-	public function testEmptyIndexPageReturnsErrorString()
-	{
-		$this->getProviderMock('Item', 'search', Null);
-		$response = $this->get('items');
-		$this->assertError(404, 'no items found');
 	}
 
 	/**
@@ -82,14 +70,41 @@ class ItemsControllerTest extends TestCase
 
 	/**
 	 * Return an error message if we have an invalid item 
+	 * http://api.shop/items/somethingThatDoesNotExist
 	 */
 	public function testFindPageReturnsErrorMessageForInvalidItem()
 	{
+		// TODO: Get error handling to work consistently
 		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
+//		$this->getProviderMock('Item', 'search', Null);
         $response = $this->get('items/somethingThatDoesNotExist');
 		$this->assertError(404, 'Item somethingThatDoesNotExist was not found');
 	}
 
+	/**
+	 * Return data from a search
+	 * http://api.shop/items/name=works
+	 */
+	public function testFindPageReturnsDataFromASearch()
+	{
+		$this->getProviderMock('Item', 'search', JSON_WORKS);
+		$json = $this->getJSON('items/name=works');
+		$this->assertEquals('works', $json->name);
+	}
+
+	/**
+	 * Return an error if there was no data returned from a search
+	 * http://api.shop/items/name=test
+	 */
+	public function testFindPageReturnsErrorIfNoDataReturnedFromSearch()
+	{
+		$this->getProviderMock('Item', 'search', Null);
+        $response = $this->get('items/name=test');
+		$this->assertError(404, 'no items found');
+	}
+
+
+// Tests for the vendors page -------------------------------------------------
 
 	/**
 	 * Show all vendors associated with a given item
@@ -135,6 +150,8 @@ class ItemsControllerTest extends TestCase
 		$this->assertError(404, 'There were no vendors for item 1');
 	}
 
+// Tests for the carts page -------------------------------------------------
+
 	/**
 	 * Show carts associated with an item
 	 * http://api.shop/items/10/carts
@@ -168,7 +185,6 @@ class ItemsControllerTest extends TestCase
 
 	/**
 	 * Show carts associated with an item where no carts were found
-	 * @return [type] [description]
 	 */
 	public function testItemCartsPageReturnsErrorMessageIfNoCartsFound()
 	{
@@ -179,6 +195,17 @@ class ItemsControllerTest extends TestCase
 		$response = $this->get('items/1/carts');
 		$this->assertError(404, 'There were no carts for item 1');
 	}
+
+// Tests for deleting data ------------------------------------------------
+
+	public function testDeleteItem()
+	{
+		// TODO: Activate this
+		// $response = $this->delete('items/10');
+		// $this->assertOK();
+	}
+
+// Tests for storing data -------------------------------------------------
 
 	/**
 	 * Fail a test due to bad json being sent. 
@@ -221,9 +248,4 @@ class ItemsControllerTest extends TestCase
 // //		$response = $this->call('POST', 'items&name="test item"&details="This is a single test item"')
 // 	}
 
-	// public function testDeleteItem()
-	// {
-	// 	$response = $this->delete('items/10');
-
-	// }
 }
