@@ -33,6 +33,8 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         \Mockery::close();
     }
 
+    // TODO: Delete this once ItemTest is using arrays rather than db calls
+    // (it has moved to IntegrationTestCase)
     /**
      * Migrates and seeds the database so that tests can be run on fresh data
      * (only needed for tests that call the database; this is MUCH, MUCH slower
@@ -43,10 +45,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         Artisan::call('migrate');
         $this->seed();
     }
-
-
-
-
 
     /*********************************************************************************
      * Mocks used to simulate data sent from other objects 
@@ -121,17 +119,50 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
 
     /**
-     * Get a URI, assert that it succeeds, then return an object with
+     * Get a controller action, assert that it succeeds, then return an object with
      * the content (in JSON) converted to an object
      *  
-     * @param  $uri       The URI from which to receive data
+     * @param  $action    The controller action from which to receive data
+     *                    (eg, ItemsController@index, etc.)
+     * @param  $params    Parameters to be sent to the controller action
      * @return stdClass   The resulting content converted to an object
      */
-    protected function getJSON($uri)
+    protected function getJsonAction($action, $params=array())
     {
-        $response = $this->get($uri);
+        $response = $this->getAction($action, $params);
         $this->assertOK();
         return json_decode($response->getContent());
+    }
+
+
+    /**
+     * Get a route, assert that it succeeds, and return the object with the content
+     * (in JSON) converted to an object
+     * 
+     * @param  $uri       The uri from which to receive data
+     *                    (eg, ItemsController@index, etc.)
+     * @param  $params    Parameters to be sent to the controller action
+     * @return stdClass   The resulting content converted to an object
+     */
+    protected function getJsonRoute($uri, $params=array())
+    {
+        $response = $this->get($uri, $params);
+        $this->assertOK();
+        return json_decode($response->getContent());
+    }
+
+
+    /**
+     * get a response from a controller action
+     * 
+     * @param  $action  The action (method) to call (eg, ItemsController@show)
+     * @param  $params  Parameters to submit to the method
+     * @return          Response of the action
+     */
+    protected function getAction($action, $params=Null)
+    {
+        $response = $this->action('GET', $action, $params);
+        return $response;
     }
 
     /**

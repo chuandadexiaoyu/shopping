@@ -4,9 +4,10 @@
 
 /**
  * @group integration
+ * @group items
  * @group db
  */
-class IntegrationTest extends TestCase 
+class ItemIntegrationTest extends IntegrationTestCase 
 {
     public function setUp()
     {
@@ -14,22 +15,22 @@ class IntegrationTest extends TestCase
         $this->prepareForTests();
     }
 
-    public function testDBConnectionWorks()
+    public function testDatabaseConnectionWorks()
     {
-        $json = $this->getJSON('items');
+        $json = $this->getJsonRoute('items');
         $this->assertGreaterThan(10, count($json));
     }
 
     public function testFindAllItems()
     {
-        $json = $this->getJSON('items');
+        $json = $this->getJsonRoute('items');
         $this->assertRecordFound($json, 'name', 'windex', 'should find Windex'); 
         $this->assertRecordFound($json, 'name', 'pencil', 'should find pencil'); 
     }
 
     public function testFindOneItem()
     {
-        $json = $this->getJSON('items/1');
+        $json = $this->getJsonRoute('items/1');
         $this->assertEquals(1, count($json));
         $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for item 1'); 
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for item 1'); 
@@ -37,7 +38,7 @@ class IntegrationTest extends TestCase
 
     public function testSearchForItemByName()
     {
-        $json = $this->getJSON('items/name=x');
+        $json = $this->getJsonRoute('items/name=x');
         $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items/name=w'); 
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items/name=w'); 
     }
@@ -52,7 +53,7 @@ class IntegrationTest extends TestCase
 
     public function testSearchForItemByNameInQuery()
     {
-        $json = $this->getJSON('items?name=x');
+        $json = $this->getJsonRoute('items?name=x');
         $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items?name=w'); 
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
     }

@@ -15,42 +15,34 @@ class ItemsControllerTest extends TestCase
 	public function testIndexPageCanBeOpenedAsAControllerAction()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
-		$response = $this->action('GET', 'ItemsController@index');
-		$this->assertOK();
-		$json = json_decode($response->getContent());
-		$this->assertEquals('works', $json->name);
-	}
-
-	public function testIndexPageCanBeOpenedWithUri()
-	{
-		$this->getProviderMock('Item', 'search', JSON_WORKS);
-		$json = $this->getJSON('items');
+		$json = $this->getJsonAction('ItemsController@index');
 		$this->assertEquals('works', $json->name);
 	}
 
 	public function testEmptyIndexPageReturnsErrorString()
 	{
 		$this->getProviderMock('Item', 'search', Null);
-		$response = $this->get('items');
+		$response = $this->getAction('ItemsController@index');
 		$this->assertError(404, 'no items found');
 	}
 
+
 // Tests for the find page -------------------------------------------------
 	
-	public function testFindPageCanBeOpenedWithAMock()
-	{
-	 	$mock = \Mockery::mock('ItemRepositoryInterface');
-		$mock->shouldReceive('search')->once()->andReturn('{"name":"works"}');
-		App::instance('ItemRepositoryInterface', $mock);
+	// public function testFindPageCanBeOpenedWithAMock()
+	// {
+	//  	$mock = \Mockery::mock('ItemRepositoryInterface');
+	// 	$mock->shouldReceive('search')->once()->andReturn('{"name":"works"}');
+	// 	App::instance('ItemRepositoryInterface', $mock);
 
-		$json = $this->getJSON('items/1');
-		$this->assertEquals('works', $json->name);
-	}
+	// 	$json = $this->getJsonAction('ItemsController@show', '1');
+	// 	$this->assertEquals('works', $json->name);
+	// }
 
 	public function testFindPageCanBeOpenedWithAnInheritedMock()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
-		$json = $this->getJSON('items/1');
+		$json = $this->getJsonAction('ItemsController@show', '1');
 		$this->assertEquals('works', $json->name);
 	}
 
@@ -64,7 +56,7 @@ class ItemsControllerTest extends TestCase
 		// $this->getProviderMock('Item', 'search', Null);
 
 		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
-		$response = $this->get('items/1');
+		$response = $this->getAction('ItemsController@show', '1');
 		$this->assertError(404, 'Item 1 was not found');
 	}
 
@@ -76,8 +68,8 @@ class ItemsControllerTest extends TestCase
 	{
 		// TODO: Get error handling to work consistently
 		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
-//		$this->getProviderMock('Item', 'search', Null);
-        $response = $this->get('items/somethingThatDoesNotExist');
+		// $this->getProviderMock('Item', 'search', Null);
+        $response = $this->getAction('ItemsController@show', 'somethingThatDoesNotExist');
 		$this->assertError(404, 'Item somethingThatDoesNotExist was not found');
 	}
 
@@ -88,7 +80,7 @@ class ItemsControllerTest extends TestCase
 	public function testFindPageReturnsDataFromASearch()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
-		$json = $this->getJSON('items/name=works');
+		$json = $this->getJsonAction('ItemsController@show', 'name=works');
 		$this->assertEquals('works', $json->name);
 	}
 
@@ -99,7 +91,7 @@ class ItemsControllerTest extends TestCase
 	public function testFindPageReturnsErrorIfNoDataReturnedFromSearch()
 	{
 		$this->getProviderMock('Item', 'search', Null);
-        $response = $this->get('items/name=test');
+        $response = $this->getAction('ItemsController@show', 'name=test');
 		$this->assertError(404, 'no items found');
 	}
 
@@ -119,7 +111,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('vendors')->once()->andReturn($mockVendor); 
 
-		$json = $this->getJSON('items/1/vendors');
+		$json = $this->getJsonAction('ItemsController@vendors', '1');
 	 	$this->assertEquals('vendor works', $json->name);
 	}
 
@@ -132,7 +124,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('search')->once()->andReturn(Null);
 
-		$response = $this->get('items/1/vendors');
+		$json = $this->getAction('ItemsController@vendors', '1');
 		$this->assertError(404, 'Item 1 was not found');
 	}
 
@@ -146,7 +138,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('vendors')->once()->andReturn(Null); 
 
-		$response = $this->get('items/1/vendors');
+		$json = $this->getAction('ItemsController@vendors', '1');
 		$this->assertError(404, 'There were no vendors for item 1');
 	}
 
@@ -165,7 +157,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn($mockCart); 
 
-		$json = $this->getJSON('items/1/carts');
+		$json = $this->getJsonAction('ItemsController@carts', '1');
 	 	$this->assertEquals('cart works', $json->name);
 	}
 
@@ -178,7 +170,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('search')->once()->andReturn(Null);
 
-		$response = $this->get('items/1/carts');
+		$json = $this->getAction('ItemsController@carts', '1');
 		$this->assertError(404, 'Item 1 was not found');
 	}
 
@@ -192,7 +184,7 @@ class ItemsControllerTest extends TestCase
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn(Null); 
 
-		$response = $this->get('items/1/carts');
+		$json = $this->getAction('ItemsController@carts', '1');
 		$this->assertError(404, 'There were no carts for item 1');
 	}
 

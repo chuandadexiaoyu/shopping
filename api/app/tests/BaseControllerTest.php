@@ -38,7 +38,7 @@ class BaseControllerTest extends TestCase
         $this->assertEquals('{"errors":["test"]}', $response->getContent());
     }
 
-    public function testOKWorks()
+    public function testRequestOkWorks()
     {
         $response = _BaseControllerTester::OK('test');
         $this->assertEquals(200, $response->getStatusCode());

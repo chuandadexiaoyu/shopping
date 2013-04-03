@@ -22,6 +22,28 @@ class ItemsController extends BaseController
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $params
+     * @return Response
+     */
+    public function show($params)
+    {
+        $item = $this->items->search($params);
+
+        if (!$item)
+            return $this->notFound("Item " . $params . ' was not found');
+
+        // if(is_string($item))
+        //     return($item);
+
+        if(is_object($item) && count($item)>0)
+            return $item->toJson();
+
+        return $this->notFound('no items found');
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return Response
@@ -68,27 +90,6 @@ class ItemsController extends BaseController
         return Response::json();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $params
-     * @return Response
-     */
-    public function show($params)
-    {
-        $item = $this->items->search($params);
-
-        if (!$item)
-            return $this->notFound("Item " . $params . ' was not found');
-
-        if(is_string($item))
-            return($item);
-
-        if(is_object($item) && count($item)>0)
-            return $item->toJson();
-
-        return $this->notFound('no items found');
-    }
 
     /**
      * Update the specified resource in storage.

@@ -19,6 +19,7 @@
     <groups>
       <exclude>
         <group>integration</group>
+        <group>db</group>
         <group>failing</group>
       </exclude>
     </groups>
