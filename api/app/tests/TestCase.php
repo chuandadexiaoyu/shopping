@@ -77,7 +77,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         $repo = $className . 'RepositoryInterface';
         $mock = \Mockery::mock($repo);
         App::instance($repo, $mock);        
-            return $mock;
+        return $mock;
     }
 
     /**

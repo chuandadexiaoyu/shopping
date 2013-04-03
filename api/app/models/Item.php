@@ -8,6 +8,12 @@ class Item extends BaseModel
         'sku' => 'between:4,20'
     );
 
+    public function something($val)
+    {
+        DB::select($val);
+        return 'val is ' . $val;
+    }
+
     public function vendors()
     {
         return $this->belongsToMany('Vendor', 'item_vendors');

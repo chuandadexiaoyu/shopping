@@ -16,29 +16,6 @@ class ItemTest extends TestCase
     }
 
 
-//     class EloquentModelFindStub extends Illuminate\Database\Eloquent\Model {
-//     public function newQuery()
-//     {
-//         $mock = m::mock('Illuminate\Database\Eloquent\Builder');
-//         $mock->shouldReceive('find')->once()->with(1, array('*'))->andReturn('foo');
-//         return $mock;
-//     }
-// }
-
-    // TODO: Figure out how to use an array instead of a database
-    // public function testIndex()
-    // {
-    //     Eloquent::shouldReceive('foo')->andReturn('bar');
-    //     // DB::shouldReceive('select')->once()->andReturn('foo');
-
-    //     // DB::pretend(function() {
-    //     //     return array( 'name' => 'Window' );
-    //     // });
-    //     //shouldReceive('get')->once()->andReturn('foo');
-    //     $item = new Item;
-    //     $this->assertEquals('Windex', $item->search(1)->name, 'should find Windex');
-    // }
-
     /**
      * @group db
      */
