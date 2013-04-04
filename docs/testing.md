@@ -39,3 +39,74 @@ Incomplete tests
 -------------------
 
 Use $this->markTestIncomplete();
+
+
+Class Map
+------------
+
+TestCase --- BaseControllerTest
+          |
+          |- ItemsControllerTest
+          |
+          |- ItemTest
+          |
+          |- IntegrationTestCase --- ItemIntegrationTest
+
+
+
+Class Documentation
+=====================
+
+TestCase
+---------
+createApplication()     Creates the application
+tearDown()              Cleans up after a test runs
+prepareForTests()       TODO: delete! Migrate and seeds the database
+
+getProviderMock($className, $function, $jsonResult)
+    Mocks a class, one function it should call, and the result (in json) returned by that function
+
+mock($classname)
+    Mocks a class (eg, item, user, vendor, etc.) based on <class>RepositoryInterface
+
+mockDbResult($jsonResult)
+    Returns a mock database result (Collection) based on JSON code
+
+getJsonAction($action, $params)
+    Run a controller action, assert it succeeds, and return the (json) content converted to an object
+
+getAction($action, $params)
+    Get a response from a controller action (eg, 'ItemsController@show')
+
+get($uri, $params)          Get a uri
+post($uri, $json, $params)  Post a json string to a uri
+put($uri, $params)          Put a json string to a uri
+delete($uri, $params)       Delete a uri
+
+assertOK()        Get a response; verify the header returned OK and the content is not empty
+assertError($code, $msg)    Get a response, verify header returns (given) code 
+                            and content contains error message 
+
+assertRecordFound($itemList, $field, $expectedValue, $errorMessage)
+    Make sure a particular record was found in a search
+
+assertRecordNotFound($itemList, $field, $expectedValue, $errorMessage)
+    Make sure a particular record was found in a search
+
+substrInArray($array, $expectedValue)
+    Returns true if substring found in any item in array
+
+
+
+IntegrationTestCase
+----------------------
+prepareForTests()       
+    Migrate and seed the database
+
+getJsonRoute($uri, $params)
+    Go to a specified route, assert it succeeds, and return the (json) content converted to an object
+
+
+
+
+

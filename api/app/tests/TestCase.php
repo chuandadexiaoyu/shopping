@@ -134,24 +134,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         return json_decode($response->getContent());
     }
 
-
-    /**
-     * Get a route, assert that it succeeds, and return the object with the content
-     * (in JSON) converted to an object
-     * 
-     * @param  $uri       The uri from which to receive data
-     *                    (eg, ItemsController@index, etc.)
-     * @param  $params    Parameters to be sent to the controller action
-     * @return stdClass   The resulting content converted to an object
-     */
-    protected function getJsonRoute($uri, $params=array())
-    {
-        $response = $this->get($uri, $params);
-        $this->assertOK();
-        return json_decode($response->getContent());
-    }
-
-
     /**
      * get a response from a controller action
      * 
@@ -166,45 +148,45 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     }
 
     /**
-     * Get a URI
-     * @param  $URI        The URI from which to receive data
+     * Get a uri
+     * @param  $uri        The uri from which to receive data
      * @param  $parameters The query (GET) parameters
      * @return Illuminate\Http\Response
      */
-    protected function get($URI, $parameters=array())
+    protected function get($uri, $parameters=array())
     {
-        return $this->call('GET', $URI, $parameters);
+        return $this->call('GET', $uri, $parameters);
     }
 
     /**
-     * Post a json string to a URI
-     * @param  $URI    The URI to receive the submitted data
+     * Post a json string to a uri
+     * @param  $uri    The uri to receive the submitted data
      * @param  $json   Raw data to be submitted (this should be json data)
      * @return Illuminate\Http\Response
      */
-    protected function post($URI, $json, $parameters=array())
+    protected function post($uri, $json, $parameters=array())
     {
-        return $this->call('POST', $URI, $parameters, array(), array(), $json);
+        return $this->call('POST', $uri, $parameters, array(), array(), $json);
     }
 
     /**
-     * Put a json string to a URI
-     * @param  $URI    The URI to receive the submitted data
+     * Put a json string to a uri
+     * @param  $uri    The uri to receive the submitted data
      * @return Illuminate\Http\Response
      */
-    protected function put($URI, $parameters=array())
+    protected function put($uri, $parameters=array())
     {
-        return $this->call('PUT', $URI, $parameters);
+        return $this->call('PUT', $uri, $parameters);
     }
 
     /**
-     * Delete a URI
-     * @param  $URI    The URI to receive the submitted data
+     * Delete a uri
+     * @param  $uri    The uri to receive the submitted data
      * @return Illuminate\Http\Response
      */
-    protected function delete($URI, $parameters=array())
+    protected function delete($uri, $parameters=array())
     {
-        return $this->call('DELETE', $URI, $parameters);
+        return $this->call('DELETE', $uri, $parameters);
     }
 
 
@@ -312,22 +294,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
                 return True;
         return False;
     }
-
-    // public function testTesterWorks()
-    // {
-    //     $this->assertTrue(True);
-    //     $mock = \Mockery::mock('something');
-    //     $mock->shouldReceive('test')->once()->andReturn('works');
-    //     $this->assertEquals('works', $mock->test());
-    // }
-
-    // /**
-    //  * @group failing 
-    //  */
-    // public function testTesterWorksForFailingTests()
-    // {
-    //     $this->assertFalse(True);
-    // }
 
 }
 

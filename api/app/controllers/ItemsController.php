@@ -32,6 +32,7 @@ class ItemsController extends BaseController
         $item = $this->items->search($params);
 
         if (!$item)
+            // App::abort(404, 'Item ' . $params . ' was not found');
             return $this->notFound("Item " . $params . ' was not found');
 
         // if(is_string($item))

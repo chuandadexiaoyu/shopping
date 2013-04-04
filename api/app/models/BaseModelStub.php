@@ -1,6 +1,6 @@
 <?php
 
-class Item extends BaseModel
+class BaseModelStub extends BaseModel
 {
     protected $table = 'items';
 
@@ -28,15 +28,5 @@ class Item extends BaseModel
             'sku'       => 'between:4,20'
         ),
     );
-
-    public function vendors()
-    {
-        return $this->belongsToMany('Vendor', 'item_vendors');
-    }
-
-    public function carts()
-    {
-        return $this->belongsToMany('Cart', 'cart_items');
-    }
 
 }

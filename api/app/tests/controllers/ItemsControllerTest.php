@@ -12,7 +12,7 @@ class ItemsControllerTest extends TestCase
 
 // Tests for the index page ------------------------------------------------
 	
-	public function testIndexPageCanBeOpenedAsAControllerAction()
+	public function testIndexPageCanBeOpened()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
 		$json = $this->getJsonAction('ItemsController@index');
@@ -29,20 +29,21 @@ class ItemsControllerTest extends TestCase
 
 // Tests for the find page -------------------------------------------------
 	
-	// public function testFindPageCanBeOpenedWithAMock()
-	// {
-	//  	$mock = \Mockery::mock('ItemRepositoryInterface');
-	// 	$mock->shouldReceive('search')->once()->andReturn('{"name":"works"}');
-	// 	App::instance('ItemRepositoryInterface', $mock);
-
-	// 	$json = $this->getJsonAction('ItemsController@show', '1');
-	// 	$this->assertEquals('works', $json->name);
-	// }
-
-	public function testFindPageCanBeOpenedWithAnInheritedMock()
+	public function testFindPageReturnsDataForExistingItemNumber()
 	{
 		$this->getProviderMock('Item', 'search', JSON_WORKS);
 		$json = $this->getJsonAction('ItemsController@show', '1');
+		$this->assertEquals('works', $json->name);
+	}
+
+	/**
+	 * Return data from a search
+	 * http://api.shop/items/name=works
+	 */
+	public function testFindPageReturnsDataForSuccessfulSearch()
+	{
+		$this->getProviderMock('Item', 'search', JSON_WORKS);
+		$json = $this->getJsonAction('ItemsController@show', 'name=works');
 		$this->assertEquals('works', $json->name);
 	}
 
@@ -64,24 +65,13 @@ class ItemsControllerTest extends TestCase
 	 * Return an error message if we have an invalid item 
 	 * http://api.shop/items/somethingThatDoesNotExist
 	 */
-	public function testFindPageReturnsErrorMessageForInvalidItem()
+	public function testFindPageReturnsErrorMessageForMissingFieldName()
 	{
 		// TODO: Get error handling to work consistently
 		$this->mock('Item')->shouldReceive('search')->once()->andReturn(Null);
 		// $this->getProviderMock('Item', 'search', Null);
         $response = $this->getAction('ItemsController@show', 'somethingThatDoesNotExist');
 		$this->assertError(404, 'Item somethingThatDoesNotExist was not found');
-	}
-
-	/**
-	 * Return data from a search
-	 * http://api.shop/items/name=works
-	 */
-	public function testFindPageReturnsDataFromASearch()
-	{
-		$this->getProviderMock('Item', 'search', JSON_WORKS);
-		$json = $this->getJsonAction('ItemsController@show', 'name=works');
-		$this->assertEquals('works', $json->name);
 	}
 
 	/**
@@ -93,6 +83,13 @@ class ItemsControllerTest extends TestCase
 		$this->getProviderMock('Item', 'search', Null);
         $response = $this->getAction('ItemsController@show', 'name=test');
 		$this->assertError(404, 'no items found');
+	}
+
+	public function testFindPageReturnsErrorIfInvalidFieldNameUsed()
+	{
+		$this->getProviderMock('Item', 'search', Null);
+        $response = $this->getAction('ItemsController@show', 'foo=bar');
+		$this->assertError(404, 'no items found');		
 	}
 
 

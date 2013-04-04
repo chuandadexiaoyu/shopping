@@ -13,7 +13,7 @@ class BaseControllerTest extends TestCase
 {
     public function testNotFoundWorks()
     {
-        $response = _BaseControllerTester::notFound();
+        $response = BaseControllerStub::notFound();
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('application/json', 
             $response->headers->get('content-type'));
@@ -22,7 +22,7 @@ class BaseControllerTest extends TestCase
 
     public function testNotFoundWorksWithErrorMessage()
     {
-        $response = _BaseControllerTester::notFound('test');
+        $response = BaseControllerStub::notFound('test');
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('application/json', 
             $response->headers->get('content-type'));
@@ -31,7 +31,7 @@ class BaseControllerTest extends TestCase
 
     public function testBadRequestWorks()
     {
-        $response = _BaseControllerTester::badRequest('test');
+        $response = BaseControllerStub::badRequest('test');
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('application/json', 
             $response->headers->get('content-type'));
@@ -40,7 +40,7 @@ class BaseControllerTest extends TestCase
 
     public function testRequestOkWorks()
     {
-        $response = _BaseControllerTester::OK('test');
+        $response = BaseControllerStub::OK('test');
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('application/json', 
             $response->headers->get('content-type'));
