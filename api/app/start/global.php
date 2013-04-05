@@ -52,6 +52,24 @@ App::error(function(Exception $exception, $code)
 	Log::error($exception);
 });
 
+App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $exception, $code)
+{
+    Log::error($exception);
+
+    $json = array('errors' => array($exception->getMessage()));
+    return Response::json($json)->setStatusCode($exception->getStatusCode());
+});
+
+App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, $code)
+{
+    Log::error($exception);
+
+    $json = array('errors' => array('Page '.Request::getUri().' was not found.'));
+    return Response::json($json)->setStatusCode($exception->getStatusCode());
+});
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Require The Filters File

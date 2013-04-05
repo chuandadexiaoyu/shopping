@@ -58,12 +58,16 @@ class ItemIntegrationTest extends IntegrationTestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
     }
 
-    // TODO: Fix
-    // public function testFailOnSearchForItemByTextOnly()
-    // {
-    //     $response = $this->get('items/somethingThatDoesNotExist');
-    //     $this->assertError(404, 'Item somethingThatDoesNotExist was not found');
-    // }
+    public function testFailOnSearchForItemByTextOnly()
+    {
+        try {
+            $result = $this->get('items/somethingThatDoesNotExist');
+        } catch(Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            $this->assertContains('Unknown field', $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should have failed on search');
+    }
 
 
     // public function testFailOnSearchForItemByTextOnly()

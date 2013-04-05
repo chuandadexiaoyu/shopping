@@ -22,6 +22,8 @@ Route::get('/items/{item}/vendors', array('uses'=>'ItemsController@vendors'));
 Route::get('/items/{item}/carts', array('uses'=>'ItemsController@carts'));
 Route::get('/items/find', array('uses'=>'ItemsController@test'));
 
+Route::get('/vendors/{item}/items', array('uses'=>'VendorsController@items'));
+
 Route::post('/user/login', array('before'=>'csrf', 'uses'=>'UsersController@postLogin'));
 
 Route::resource('users', 'UsersController');

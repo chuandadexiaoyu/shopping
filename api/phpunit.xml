@@ -18,10 +18,9 @@
 
     <groups>
       <exclude>
-        <group>integration</group>
-        <group>db</group>
-        <group>failing</group>
+        <group>failing</group>   <!-- because the failing tests are just to verify that things can fail -->
       </exclude>
     </groups>
 
 </phpunit>
+

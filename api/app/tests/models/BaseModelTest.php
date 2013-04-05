@@ -72,8 +72,6 @@ class BaseModelTest extends TestCase
      */
     public function testSearchForBaseModelWithKeywords()
     {
-        // TODO: extract key words from the search string,
-        // eg count=x&offset=y; these should be OK
         $this->prepareForTests();
         $model = new BaseModelStub;
         $result = $model->search('count=4&offset=4');
@@ -99,9 +97,6 @@ class BaseModelTest extends TestCase
      */
     public function testSearchFailsIfPassedInvalidFieldNames()
     {
-        // TODO: extract key words from the search string,
-        // eg count=x&offset=y; these should be OK
-        // foo=bar should throw an exception.
         $this->prepareForTests();
         $model = new BaseModelStub;
         $result = $model->search('foo=bar');
@@ -114,7 +109,7 @@ class BaseModelTest extends TestCase
 
 // Validation ----------------------------------------------------------------
 
-    public function testValidateSucceedsForValidName()
+    public function testValidateSucceedsIfPassedValidArray()
     {
         $model = new BaseModelStub;
 
@@ -173,7 +168,30 @@ class BaseModelTest extends TestCase
     public function testValidateThrowsErrorForUnknownField()
     {
         $model = new BaseModelStub;
-        $validator = $model->validate(array('foo' => 'bar'));        
+        $validator = $model->validate(array('foo' => 'bar'), 'fields');
+    }
+
+    /**
+     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function testValidateThrowsErrorForMissingValuesInValidationRulesArray()
+    {
+        $model = new BaseModelStub;
+        $validator = $model->validate(array('foo' => 'bar'), 'wrong');
+    }
+
+    public function testValidateSucceedsForCustomContext()
+    {
+        $model = new BaseModelStub;
+        $validator = $model->validate(array('foo' => 'bar'), 'foo');              
+        $this->assertTrue($validator->passes());        
+    }
+
+    public function testValidateSucceedsForReservedWords()
+    {
+        $model = new BaseModelStub;
+        $validator = $model->validate(array('offset' => '4'));              
+        $this->assertTrue($validator->passes());
     }
 
     public function testValidateFailsForInvalidDetails()
@@ -205,6 +223,31 @@ class BaseModelTest extends TestCase
         $this->assertTrue($this->substrInArray($errors, 'between'), 
             'should return character limit message');
     }
+
+
+
+// Deletions ------------------------------------------------------------------------
+
+    /**
+     * @group db
+     */
+    public function testDeleteWorks()
+    {
+        $this->prepareForTests();
+        $model = new BaseModelStub;
+        $this->assertNotNull($model->search(10), 'should exist before deletion');
+        $model->destroy(10);
+        $this->assertNull($model->search(10), 'should not exist after deletion');
+    }
+
+
+    public function testDeleteErrorIfRecordNotFound()
+    {
+        $this->prepareForTests();
+        $model = new BaseModelStub;
+        $model->destroy(100);
+    }
+
 
 
 }

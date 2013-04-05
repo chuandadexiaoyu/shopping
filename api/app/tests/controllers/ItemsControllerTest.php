@@ -187,11 +187,12 @@ class ItemsControllerTest extends TestCase
 
 // Tests for deleting data ------------------------------------------------
 
-	public function testDeleteItem()
+	public function testDestroyItem()
 	{
-		// TODO: Activate this
-		// $response = $this->delete('items/10');
-		// $this->assertOK();
+		$mockItem = $this->mock('Item');
+		$mockItem->shouldReceive('destroy')->once()->andReturn(Null);
+		$this->delete('items/10');
+		$this->assertOK();
 	}
 
 // Tests for storing data -------------------------------------------------

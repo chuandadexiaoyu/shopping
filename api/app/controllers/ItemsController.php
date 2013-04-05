@@ -111,8 +111,8 @@ class ItemsController extends BaseController
      */
     public function destroy($id)
     {
-        if ($this->items->delete($id))
-        	return ;
+        $this->items->destroy($id);
+        return $this->OK('item '.$id.' deleted');
     }
 
     public function vendors($id)
@@ -136,5 +136,6 @@ class ItemsController extends BaseController
             return $this->notFound("There were no carts for item " . $id);
         return $carts->get();
     }
+
 
 }

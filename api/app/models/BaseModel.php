@@ -3,12 +3,14 @@
 class BaseModel extends Eloquent
 {
     
-    public $reservedWords = array(
+    protected $reservedWords = array(
         'count',
         'offset'
     );
 
-    public $validationRules = array();
+    protected $validationRules = array();
+
+    protected $defaultRule = 'view';
 
 
     /**
@@ -18,37 +20,34 @@ class BaseModel extends Eloquent
      * @param  string $context  context of the request (view, add, edit, etc.)
      * @return [type]           [description]
      */
-    public function validate($data, $context='view')
+    public function validate($data, $context=Null)
     {
+        $context = $context ?: $this->defaultRule;
         $params = $this->getInputParameters($data);
-        if (!isset($this->validationRules[$context])) {
-            App::abort(500, 'invalid validation rule "'.$context.'"');
-        }
-
+        $this->verifyAllFieldNamesAreKnown($params, $context);
         $this->verifyAllFieldsHaveValues($params);
-        $this->verifyAllFieldNamesAreKnown($params);
 
         return Validator::make($params, $this->validationRules[$context]);
     }
 
-    public function search($findWhat)
+    public function search($findWhat, $context=Null)
     {
         // If we were passed an integer, find the primary key
         if(is_numeric($findWhat)) {
             return parent::find($findWhat);            
         } 
 
-        $context = 'view';
         $params  = $this->getInputParameters($findWhat);
 
         // Validate the input
+        $context = $context ?: $this->defaultRule;
         $validator = $this->validate($params, $context);
         if (!$validator->passes()) {
             App::abort(400, $validator->errors()->all(':message'));      
         }
 
-        // search for submitted parameters
         // TODO: Figure out how to use other parameters: =, >=, <=, >, < 
+        // search for submitted parameters
         $table = $this->getTable();
         $foundItems = $this->from($table);
         foreach($params as $key => $value) {
@@ -59,6 +58,9 @@ class BaseModel extends Eloquent
         }
         return $foundItems->get();
     }
+
+
+// Private helper functions --------------------------------------------------------------
 
     /**
      * Return the input parameters as an array
@@ -85,7 +87,6 @@ class BaseModel extends Eloquent
         return $params;
     }
 
-
     /**
      * We should have key/value parameter pairs. If we don't, throw an error
      */
@@ -98,24 +99,46 @@ class BaseModel extends Eloquent
         }
     }
 
-    private function verifyAllFieldNamesAreKnown($data, $context='fields')
+
+    private function verifyAllFieldNamesAreKnown($data, $context=Null)
     {
+        $context = $context ?: $this->defaultRule;
+        $this->verifyContextExists($context);
+
         $paramKeys = array_keys($data);
-        $ruleKeys  = $this->validationRules[$context];
+        $ruleKeys  = array_keys($this->validationRules[$context]);
         $diff      = array_diff($paramKeys, $ruleKeys, $this->reservedWords);
 
         if (count($diff)==0)
             return;
 
         if (count($diff)==1)
-            App::abort(400, 'Unknown field "'.$diff[0].'"');
+            App::abort(400, 'Unknown field: '.$diff[0].'');
 
         $fieldList = '';
         foreach($diff as $field) {
             $fieldList .= $field . ', ';
         }
-        App::abort(400, 'Unknown fields "'.substr($fieldList,0,-2).'"');
+        App::abort(400, 'Unknown fields: '.substr($fieldList,0,-2).'');
     }
+
+
+    private function verifyContextExists($context)
+    {
+        if (!isset($this->validationRules[$context])) {
+            App::abort(500, 'invalid validation rule: '.$context.'');
+        }
+
+        // check each key in the context to make sure it has an associated value
+        foreach($this->validationRules[$context] as $key=>$value) {
+            if (is_integer($key)) {
+                App::abort(500, 'missing value for validation rule: '.$context.'.'.$value);
+            }
+        }
+
+        return True;
+    }
+
 
 }
 

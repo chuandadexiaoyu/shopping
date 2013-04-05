@@ -31,7 +31,8 @@ class Item extends BaseModel
 
     public function vendors()
     {
-        return $this->belongsToMany('Vendor', 'item_vendors');
+        return $this->belongsToMany('Vendor', 'item_vendors')
+            ->withPivot(array('confirmed', 'last_known_price'));
     }
 
     public function carts()
