@@ -1,5 +1,7 @@
 <?php
 
+use \Symfony\Component\HttpKernel\Exception\HttpException;
+
 /**
  * This class tests the BaseModel (in order to test, a stub has been included)
  * 
@@ -68,15 +70,16 @@ class BaseModelTest extends TestCase
 
 
     /**
+     * TODO: write a test to search for a model with count and offset
      * @group db
      */
-    public function testSearchForBaseModelWithKeywords()
-    {
-        $this->prepareForTests();
-        $model = new BaseModelStub;
-        $result = $model->search('count=4&offset=4');
-        $this->assertEquals(0, count($result));
-    }
+    // public function testSearchForBaseModelWithKeywords()
+    // {
+    //     $this->prepareForTests();
+    //     $model = new BaseModelStub;
+    //     $result = $model->search('count=4&offset=4');
+    //     $this->assertEquals(0, count($result));
+    // }
 
 
     /**
@@ -144,40 +147,30 @@ class BaseModelTest extends TestCase
             'should return character limit message');
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
-     */
     public function testValidateThrowsErrorIfInvalidRuleSelected()
     {
-        $model = new BaseModelStub;
-        $validator = $model->validate(array(), 'invalidRule');
+        $this->runTestForValidationException(array(), 'invalidRule', 'invalid');
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
-     */
     public function testValidateThrowsErrorIfNotGivenArrayOrArrayableObject()
     {
-        $model = new BaseModelStub;
-        $validator = $model->validate('foo');
+        $this->runTestForValidationException('foo', Null, 'Unknown field');
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
-     */
     public function testValidateThrowsErrorForUnknownField()
     {
-        $model = new BaseModelStub;
-        $validator = $model->validate(array('foo' => 'bar'), 'fields');
+        $this->runTestForValidationException(array('foo' => 'bar'), 'fields', 'Unknown field');
     }
 
-    /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\HttpException
-     */
     public function testValidateThrowsErrorForMissingValuesInValidationRulesArray()
     {
-        $model = new BaseModelStub;
-        $validator = $model->validate(array('foo' => 'bar'), 'wrong');
+        $this->runTestForValidationException(array('foo' => 'bar'), 'wrong', 'missing');
+    }
+
+    public function testValidateThrowsErrorForOneUnknownFieldInMany()
+    {
+        $data = array('name' => 'c', 'h' => '2');
+        $this->runTestForValidationException($data, 'wrong', 'missing');        
     }
 
     public function testValidateSucceedsForCustomContext()
@@ -249,6 +242,20 @@ class BaseModelTest extends TestCase
     }
 
 
+// Helper Functions ---------------------------------------------------------------
+
+    private function runTestForValidationException($validateData, $validateContext, $errorMessageContains)
+    {
+        $model = new BaseModelStub;
+        try {
+            $validator = $model->validate($validateData, $validateContext);
+        } catch( HttpException $e ) {
+            $this->assertContains($errorMessageContains, $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should throw an exception');
+
+    }
 
 }
 

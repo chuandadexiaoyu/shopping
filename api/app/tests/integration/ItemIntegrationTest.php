@@ -2,6 +2,8 @@
 
 // The integration tests rely on sample data being in the database
 
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 /**
  * @group integration
  * @group items
@@ -44,6 +46,9 @@ class ItemIntegrationTest extends IntegrationTestCase
     }
 
     // TODO: Find items with paging
+    // (fails with ErrorException: Notice: Undefined property: 
+    //      Symfony\Component\HttpFoundation\ResponseHeaderBag::$name 
+    //      in C:\wamp\www\shopping\api\app\tests\TestCase.php line 293)
     // public function testFindItemsWithPaging()
     // {
     //     $json = $this->get('items/offset=5&count=5');
@@ -58,35 +63,46 @@ class ItemIntegrationTest extends IntegrationTestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
     }
 
-    public function testFailOnSearchForItemByTextOnly()
+    public function testFailOnSearchForItemByKeyOnly()
     {
-        try {
-            $result = $this->get('items/somethingThatDoesNotExist');
-        } catch(Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            $this->assertContains('Unknown field', $e->getMessage());
-            return;
-        }
-        $this->assertTrue(False, 'should have failed on search');
+        $this->runTestForException('GET', 'items/name', 400, 'invalid value');
     }
 
+    public function testFailOnSearchForItemWithoutOneValue()
+    {
+        $this->runTestForException('GET', 'items/name=&sku=c', 400, 'invalid value');
+    }
 
-    // public function testFailOnSearchForItemByTextOnly()
-    // {
-    //     try {
-    //         $response = $this->get('items/somethingThatDoesNotExist');
-    //     } catch( Symfony\Component\HttpKernel\Exception\HttpException $e ) {
-    //         $this->assertError(404, 'Item somethingThatDoesNotExist was not found');
-    //     }
-    // }
+    public function testFailOnSearchForItemByUnknownTextOnly()
+    {
+        $this->runTestForException('GET', 'items/somethingThatDoesNotExist', 400, 'Unknown field');
+    }
 
+    public function testFailOnSearchForItemWithBadFieldName()
+    {
+        $this->runTestForException('GET', 'items/foo=bar', 400, 'Unknown field');
+    }
 
+    public function testFailOnSearchForItemWithOneBadFieldName()
+    {
+        $this->runTestForException('GET', 'items/name=c&foo=bar', 400, 'Unknown field');
+    }
 
-
-    // TODO: Fail on searches for items with bad field names
-    // public function testFailOnSearchForItemWithBadFieldName()
-    // {
-    //     $response = $this->get('items/invalidFieldName=someText');
-    //     $this->assertError(404, 'Field invalidFieldName does not exist in table items');
-    // }
     
+
+// Helper Functions ---------------------------------------------------------------
+
+    private function runTestForException($method, $uri, $expectedStatusCode, $expectedError)
+    {
+        try {
+            $result = $this->call($method, $uri);
+        } catch( HttpException $e ) {
+            $this->assertEquals($expectedStatusCode, $e->getStatusCode());
+            $this->assertContains($expectedError, $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should throw an exception');
+
+    }
+
 }

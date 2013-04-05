@@ -51,11 +51,15 @@ class BaseModel extends Eloquent
         $table = $this->getTable();
         $foundItems = $this->from($table);
         foreach($params as $key => $value) {
-            $foundItems->where($key, 'like', '%'.$value.'%', 'and');
+            if (!in_array($key, $this->reservedWords)) {
+                $foundItems->where($key, 'like', '%'.$value.'%', 'and');
+            }
         }
         if (count($foundItems->get())==1) {
             return $foundItems->first();
         }
+
+        // TODO: Figure out pagination
         return $foundItems->get();
     }
 
@@ -112,8 +116,9 @@ class BaseModel extends Eloquent
         if (count($diff)==0)
             return;
 
-        if (count($diff)==1)
-            App::abort(400, 'Unknown field: '.$diff[0].'');
+        if (count($diff)==1) {
+            App::abort(400, 'Unknown field: '.$diff[key($diff)].'');
+        }
 
         $fieldList = '';
         foreach($diff as $field) {
