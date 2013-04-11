@@ -32,20 +32,16 @@ class ItemsController extends BaseController
         $item = $this->items->search($params);
 
         if (!$item)
-            // App::abort(404, 'Item ' . $params . ' was not found');
-            return $this->notFound("Item " . $params . ' was not found');
+            App::abort(404, 'Item ' . $params . ' was not found');
 
-        // if(is_string($item))
-        //     return($item);
-
-        if(is_object($item) && count($item)>0)
+        if(is_object($item) && count($item)>0 && method_exists($item, 'toJson'))
             return $item->toJson();
 
-        return $this->notFound('no items found');
+        App::abort(404, 'no items found');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource to the database.
      *
      * @return Response
      */
@@ -53,18 +49,17 @@ class ItemsController extends BaseController
     {
         $request = Input::json();
         if (count($request)==0) {
-            return $this->badRequest('Invalid json string');
+            App::abort(400, 'Invalid json string');
         }
 
         // attempt to validate
-        var_dump(Input::json());
-        $validator = $this->items->validate(Input::json());
+        $validator = $this->items->validate($request, 'edit');
         if (!$validator->passes()) {
-            var_dump($validator->messages()->all(':message'));
-            // return $this->badRequest($validation->getMessageBag()->all(':message'));
-        } else {
-            var_dump($request);
+            App::abort(400, $this->getDelimitedValidationMessages($validator));
         }
+
+        // echo 'validated';
+        return;
         // $this->items->create(array(
         //  'name' => Input::get('name'),
         //  'details' => Input
@@ -119,10 +114,11 @@ class ItemsController extends BaseController
     {
         $item = $this->items->search($id);
         if (!$item)
-            return $this->notFound("Item " . $id . ' was not found');
+            App::abort(404, 'Item '.$id.' was not found');
+            // return $this->notFound("Item " . $id . ' was not found');
         $vendors = $item->vendors();
         if (!$vendors)
-            return $this->notFound("There were no vendors for item " . $id);
+            App::abort(404, "There were no vendors for item " . $id);
         return $vendors->get();
     }
 
@@ -130,10 +126,10 @@ class ItemsController extends BaseController
     {
         $item = $this->items->search($id);
         if (!$item)
-            return $this->notFound("Item " . $id . ' was not found');
+            App::abort(404, "Item " . $id . ' was not found');
         $carts = $item->carts();
         if (!$carts)
-            return $this->notFound("There were no carts for item " . $id);
+            App::abort(404, "There were no carts for item " . $id);
         return $carts->get();
     }
 

@@ -106,6 +106,22 @@ class BaseModelTest extends TestCase
         $this->assertEquals(0, count($result));
     }
 
+    /**
+     * @group db
+     */
+    public function testSearchThrowsErrorIfPassedInvalidSearchCriteria()
+    {
+        $this->prepareForTests();
+        $model = new BaseModelStub;
+        try {
+            $model->search('id=-1');    // This will throw an exception
+            $model->search('-1');       // This will return Null
+        } catch( HttpException $e ) {
+            $this->assertContains('id must be at least 0', $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should throw an exception');
+    }
 
 
 

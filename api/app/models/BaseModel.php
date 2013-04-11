@@ -13,23 +13,6 @@ class BaseModel extends Eloquent
     protected $defaultRule = 'view';
 
 
-    /**
-     * Validate data according to the validation rules
-     * 
-     * @param  array $data      array of field/value pairs to validate
-     * @param  string $context  context of the request (view, add, edit, etc.)
-     * @return [type]           [description]
-     */
-    public function validate($data, $context=Null)
-    {
-        $context = $context ?: $this->defaultRule;
-        $params = $this->getInputParameters($data);
-        $this->verifyAllFieldNamesAreKnown($params, $context);
-        $this->verifyAllFieldsHaveValues($params);
-
-        return Validator::make($params, $this->validationRules[$context]);
-    }
-
     public function search($findWhat, $context=Null)
     {
         // If we were passed an integer, find the primary key
@@ -43,7 +26,7 @@ class BaseModel extends Eloquent
         $context = $context ?: $this->defaultRule;
         $validator = $this->validate($params, $context);
         if (!$validator->passes()) {
-            App::abort(400, $validator->errors()->all(':message'));      
+            App::abort(400, $this->getDelimitedValidationMessages($validator, ', '));
         }
 
         // TODO: Figure out how to use other parameters: =, >=, <=, >, < 
@@ -62,6 +45,25 @@ class BaseModel extends Eloquent
         // TODO: Figure out pagination
         return $foundItems->get();
     }
+
+
+    /**
+     * Validate data according to the validation rules
+     * 
+     * @param  array $data      array of field/value pairs to validate
+     * @param  string $context  context of the request (view, add, edit, etc.)
+     * @return [type]           [description]
+     */
+    public function validate($data, $context=Null)
+    {
+        $context = $context ?: $this->defaultRule;
+        $params = $this->getInputParameters($data);
+        $this->verifyAllFieldNamesAreKnown($params, $context);
+        $this->verifyAllFieldsHaveValues($params);
+
+        return Validator::make($params, $this->validationRules[$context]);
+    }
+
 
 
 // Private helper functions --------------------------------------------------------------
@@ -142,6 +144,15 @@ class BaseModel extends Eloquent
         }
 
         return True;
+    }
+
+    private function getDelimitedValidationMessages($validator, $delineator=', ')
+    {
+        $return = '';
+        foreach($validator->errors()->all(':message') as $message) {
+            $return .= $message . $delineator;
+        }
+        return substr($return, 0, -(strlen($delineator)));      
     }
 
 

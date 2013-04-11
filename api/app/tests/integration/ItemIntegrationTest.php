@@ -63,6 +63,11 @@ class ItemIntegrationTest extends IntegrationTestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
     }
 
+    public function testFailOnSearchForMissingItem()
+    {
+        $this->runTestForException('GET', 'items/99', 404, 'Item 99 was not found');
+    }
+
     public function testFailOnSearchForItemByKeyOnly()
     {
         $this->runTestForException('GET', 'items/name', 400, 'invalid value');
@@ -88,6 +93,26 @@ class ItemIntegrationTest extends IntegrationTestCase
         $this->runTestForException('GET', 'items/name=c&foo=bar', 400, 'Unknown field');
     }
 
+// Tests for storing data -------------------------------------------------
+
+    public function testFailToStoreItemDueToBadJson()
+    {
+        $json = '{"name":"dragon","details":"I like dragons.",';
+        $this->postUriWithException('items', $json, 400, 'Invalid json string'); 
+    }
+
+    // public function testFailToStoreItemDueToInvalidDetails()
+    // {
+    //     $json = '{"name":"Joel","details":"d"}';
+    //     $this->postUriWithException('items', $json, 400, 'Invalid detail'); 
+    // }
+
+// Tests for deleting data ------------------------------------------------
+
+    // public function testDestroyItem()
+    // {
+    //     $this->delete('items/10');
+    // }
     
 
 // Helper Functions ---------------------------------------------------------------

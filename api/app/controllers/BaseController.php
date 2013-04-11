@@ -9,25 +9,35 @@ class BaseController extends Controller
      * <project>\api\vendor\symfony\http-foundation
      *     \Symfony\Component\HttpFoundation\Response.php
      */
-    protected static function notFound($errorValue=Null)
-    {
-        if(!$errorValue)
-            return Response::json()->setStatusCode(404);
+    // protected static function notFound($errorValue=Null)
+    // {
+    //     if(!$errorValue)
+    //         return Response::json()->setStatusCode(404);
 
-        $json = array('errors' => array($errorValue));
-        return Response::json($json)->setStatusCode(404);
-    }
+    //     $json = array('errors' => array($errorValue));
+    //     return Response::json($json)->setStatusCode(404);
+    // }
 
-    protected static function badRequest($errorValue)
-    {
-        $json = array('errors' => array($errorValue));
-        return Response::json($json)->setStatusCode(400);
-    } 
+    // protected static function badRequest($errorValue)
+    // {
+    //     $json = array('errors' => array($errorValue));
+    //     return Response::json($json)->setStatusCode(400);
+    // } 
  
-    protected static function OK($message)
+    // protected static function OK($message)
+    // {
+    //     $json = array($message);
+    //     return Response::json($json)->setStatusCode(200);
+    // } 
+    // 
+    
+    protected function getDelimitedValidationMessages($validator, $delineator=', ')
     {
-        $json = array($message);
-        return Response::json($json)->setStatusCode(200);
-    } 
+        $return = '';
+        foreach($validator->errors()->all(':message') as $message) {
+            $return .= $message . $delineator;
+        }
+        return substr($return, 0, -(strlen($delineator)));      
+    }
  
 }

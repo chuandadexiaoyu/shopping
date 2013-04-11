@@ -1,6 +1,8 @@
 <?php
 
 use Mockery\Mockery;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
 
 define('JSON_WORKS',        '{"name":"works"}');
 define('JSON_ITEM_WORKS',   '{"name":"item works"}');
@@ -102,6 +104,68 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         return $result;
     }
 
+    protected function mockException($statusCode, $message)
+    {
+        $mock = new Symfony\Component\HttpKernel\Exception\HttpException($statusCode, $message);
+        return $mock;
+    }
+
+    protected function mockFailingValidator()
+    {
+        $v = Mockery::mock('Illuminate\Validation\Factory');
+        $v->shouldReceive('passes')->once()->andReturn(False);
+        $v->shouldReceive('messages->all')->once()->andReturn('foo');
+        return $v;
+    }
+
+
+    /**
+     * Get a controller action, assert that it succeeds, then return an object with
+     * the content (in JSON) converted to an object
+     *  
+     * @param  $action    The controller action from which to receive data
+     *                    (eg, ItemsController@index, etc.)
+     * @param  $params    Parameters to be sent to the controller action
+     * @return stdClass   The resulting content converted to an object
+     */
+    protected function getJsonAction($action, $params=array())
+    {
+        $response = $this->action('GET', $action, $params);
+        $this->assertOK();
+        return json_decode($response->getContent());
+    }
+
+    /**
+     * Get a thrown exception from a controller action
+     * 
+     * @param  $action             The action (method) to call (eg, ItemsController@show)
+     * @param  $params             Parameters to submit to the method
+     * @param  $expectedStatusCode The expected status code of the action
+     * @param  $expectedError      The expected error message from the action
+     */
+    protected function getActionWithException($action, $params, $expectedStatusCode, $expectedError)
+    {
+        try {
+            $result = $this->action('GET', $action, $params);
+        } catch( HttpException $e ) {
+            $this->assertEquals($expectedStatusCode, $e->getStatusCode());
+            $this->assertContains($expectedError, $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should throw an exception getting '.$action. ' with parameters '.$params);
+    }
+
+    protected function postUriWithException($uri, $json, $expectedStatusCode, $expectedError, $params=array())
+    {
+        try {
+            $this->call('POST', $uri, $params, array(), array(), $json);
+        } catch ( HttpException $e ) {
+            $this->assertEquals($expectedStatusCode, $e->getStatusCode());
+            $this->assertContains($expectedError, $e->getMessage());
+            return;
+        }
+        $this->assertTrue(False, 'should throw an exception posting '.$uri. ' with parameters '.$json);
+    }
 
 
     /*********************************************************************************
@@ -116,36 +180,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
      *  string  $content       The raw body data
      *  bool    $changeHistory 
      */
-
-
-    /**
-     * Get a controller action, assert that it succeeds, then return an object with
-     * the content (in JSON) converted to an object
-     *  
-     * @param  $action    The controller action from which to receive data
-     *                    (eg, ItemsController@index, etc.)
-     * @param  $params    Parameters to be sent to the controller action
-     * @return stdClass   The resulting content converted to an object
-     */
-    protected function getJsonAction($action, $params=array())
-    {
-        $response = $this->getAction($action, $params);
-        $this->assertOK();
-        return json_decode($response->getContent());
-    }
-
-    /**
-     * get a response from a controller action
-     * 
-     * @param  $action  The action (method) to call (eg, ItemsController@show)
-     * @param  $params  Parameters to submit to the method
-     * @return          Response of the action
-     */
-    protected function getAction($action, $params=Null)
-    {
-        $response = $this->action('GET', $action, $params);
-        return $response;
-    }
 
     /**
      * Get a uri

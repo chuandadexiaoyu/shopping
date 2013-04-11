@@ -64,7 +64,11 @@ App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException
 {
     Log::error($exception);
 
-    $json = array('errors' => array('Page '.Request::getUri().' was not found.'));
+    if ($exception->getMessage()) {
+        $json = array('errors' => array($exception->getMessage()));
+    } else {
+        $json = array('errors' => array('Page '.Request::getUri().' was not found.'));
+    }
     return Response::json($json)->setStatusCode($exception->getStatusCode());
 });
 
