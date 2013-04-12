@@ -45,17 +45,6 @@ class ItemIntegrationTest extends IntegrationTestCase
         $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items/name=w'); 
     }
 
-    // TODO: Find items with paging
-    // (fails with ErrorException: Notice: Undefined property: 
-    //      Symfony\Component\HttpFoundation\ResponseHeaderBag::$name 
-    //      in C:\wamp\www\shopping\api\app\tests\TestCase.php line 293)
-    // public function testFindItemsWithPaging()
-    // {
-    //     $json = $this->get('items/offset=5&count=5');
-    //     $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items?name=w'); 
-    //     $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
-    // }
-
     public function testSearchForItemByNameInQuery()
     {
         $json = $this->getJsonRoute('items?name=x');
@@ -66,6 +55,21 @@ class ItemIntegrationTest extends IntegrationTestCase
     public function testFailOnSearchForMissingItem()
     {
         $this->runTestForException('GET', 'items/99', 404, 'Item 99 was not found');
+    }
+
+    public function testFailOnSearchForNegativeItemNumber()
+    {
+        $this->runTestForException('GET', 'items/-1', 404, 'Item -1 was not found');
+    }
+
+    public function testFailOnSearchForNegativeItemNumberWithKey()
+    {
+        $this->runTestForException('GET', 'items/id=-1', 400, 'must be at least 0');
+    }
+
+    public function testFailOnSearchForHugeNumber()
+    {
+        $this->runTestForException('GET', 'items/'.str_repeat('9876543210',256), 404, 'not found');
     }
 
     public function testFailOnSearchForItemByKeyOnly()
@@ -95,16 +99,50 @@ class ItemIntegrationTest extends IntegrationTestCase
 
 // Tests for storing data -------------------------------------------------
 
+    public function testFailToStoreItemDueToMissingName()
+    {
+        $json = '{"details":"the name field is required, but missing"}';        
+        $this->postUriWithException('items', $json, 400, 'name field is required'); 
+    }
+
     public function testFailToStoreItemDueToBadJson()
     {
         $json = '{"name":"dragon","details":"I like dragons.",';
         $this->postUriWithException('items', $json, 400, 'Invalid json string'); 
     }
 
-    // public function testFailToStoreItemDueToInvalidDetails()
+    public function testFailToStoreItemDueToInvalidDetails()
+    {
+        $json = '{"name":"Joel","details":"d"}';
+        $this->postUriWithException('items', $json, 400, 'must be between'); 
+    }
+
+    public function testFailToStoreItemDueToMultipleInvalidEntries()
+    {
+        $json = '{"name":"J","details":"d"}';        
+        $this->postUriWithException('items', $json, 400, array('must be at least','must be between')); 
+    }
+
+
+    /**
+     * @group anow
+     */
+    // public function testStoreDataSucceeds()
     // {
-    //     $json = '{"name":"Joel","details":"d"}';
-    //     $this->postUriWithException('items', $json, 400, 'Invalid detail'); 
+    //     $json = '{"name":"Joel","details":"works"}';  
+    //     $result = $this->post('items', $json);
+    //     $this->assertOK();
+    //     $id = json_decode($result->getContent())->id;
+    //     var_dump($this->getJsonRoute('items/'.$id));
+
+    //     var_dump($id);
+
+    //     // var_dump($result);
+    //     // $c = $result->getContent();
+    //     // var_dump(json_decode($c)->id);
+
+    //     // $json = $this->getJsonRoute('items/1');
+
     // }
 
 // Tests for deleting data ------------------------------------------------
@@ -113,6 +151,22 @@ class ItemIntegrationTest extends IntegrationTestCase
     // {
     //     $this->delete('items/10');
     // }
+
+
+
+// Unfinished Tests -----------------------------------------------------------------
+
+    // TODO: Find items with paging
+    // (fails with ErrorException: Notice: Undefined property: 
+    //      Symfony\Component\HttpFoundation\ResponseHeaderBag::$name 
+    //      in C:\wamp\www\shopping\api\app\tests\TestCase.php line 293)
+    // public function testFindItemsWithPaging()
+    // {
+    //     $json = $this->get('items/offset=5&count=5');
+    //     $this->assertRecordFound($json, 'name', 'windex', 'should find Windex for items?name=w'); 
+    //     $this->assertRecordNotFound($json, 'name', 'pencil', 'should not find pencil for items?name=w'); 
+    // }
+
     
 
 // Helper Functions ---------------------------------------------------------------

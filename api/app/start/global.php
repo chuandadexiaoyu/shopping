@@ -47,16 +47,30 @@ Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 |
 */
 
+if (!function_exists('getJsonStringForError')) {
+    function getJsonStringForError($exception)
+    {
+        $data = json_decode($exception->getMessage());
+        if (!$data) {
+            $json = array('errors' => array($exception->getMessage()));
+        } else {
+            $json = array('errors' => $data);
+        }
+        return $json;
+    }
+}
+
 App::error(function(Exception $exception, $code)
 {
 	Log::error($exception);
+    $json = getJsonStringForError($exception);
+    return Response::json($json)->setStatusCode(500);
 });
 
 App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $exception, $code)
 {
     Log::error($exception);
-
-    $json = array('errors' => array($exception->getMessage()));
+    $json=getJsonStringForError($exception);
     return Response::json($json)->setStatusCode($exception->getStatusCode());
 });
 
@@ -65,7 +79,7 @@ App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException
     Log::error($exception);
 
     if ($exception->getMessage()) {
-        $json = array('errors' => array($exception->getMessage()));
+        $json=getJsonStringForError($exception);
     } else {
         $json = array('errors' => array('Page '.Request::getUri().' was not found.'));
     }
@@ -86,3 +100,5 @@ App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException
 */
 
 require __DIR__.'/../filters.php';
+
+

@@ -140,7 +140,7 @@ class ItemsControllerTest extends TestCase
 	public function testItemCartsPageCanBeShown()
 	{
 		$mockCart = $this->mock('Cart');
-		$mockCart->shouldReceive('get')->once()->andReturn('{"name":"cart works"}');
+		$mockCart->shouldReceive('get')->once()->andReturn(JSON_CART_WORKS);
 
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
@@ -171,19 +171,26 @@ class ItemsControllerTest extends TestCase
 		$mockItem = $this->mock('Item');
 		$mockItem->shouldReceive('search')->once()->andReturn($mockItem);
 		$mockItem->shouldReceive('carts')->once()->andReturn(Null); 
-
-		$json = $this->getActionWithException('ItemsController@carts', '1', 404, 'There were no carts for item 1');
+		$this->getActionWithException('ItemsController@carts', '1', 404, 'There were no carts for item 1');
 	}
 
 // Tests for deleting data ------------------------------------------------
 
-	public function testDestroyItem()
+	public function testDestroyFailsForNonExistingItem()
 	{
-		// $mockItem = $this->mock('Item');
-		// $mockItem->shouldReceive('destroy')->once()->andReturn(Null);
-		// $this->delete('items/10');
-		// $this->assertOK();
+		$mockItem = $this->mock('Item');
+		$mockItem->shouldReceive('search')->once()->andReturn(Null);
+		$this->getActionWithException('ItemsController@destroy', '1', 404, 'not found');
 	}
+
+	// public function testDestroySuccess()
+	// {
+	// 	$mockItem = $this->mock('Item');
+	// 	$mockItem->shouldReceive('search')->once()->andReturn(True);
+	// 	$mockItem->shouldReceive('destroy')->once()->andReturn(Null);
+	// 	$json = $this->getJsonAction('ItemsController@destroy', '1');	
+			
+	// }
 
 // Tests for storing data -------------------------------------------------
 
@@ -193,48 +200,47 @@ class ItemsControllerTest extends TestCase
         $this->postUriWithException('items', $json, 400, 'Invalid json'); 
 	}
 
-	// public function getFailingValidationStub()
-	// {
-	// 	$data = new Illuminate\Support\MessageBag(array(0=>'invalid detail'));
-	// 	$v = Mockery::mock('Illuminate\Validation\Factory');
-	// 	$v->shouldReceive('passes')->once()->andReturn(False);
-	// 	$v->shouldReceive('errors->all')->once()->andReturn($data);
-	// 	return $v;
-	// }
-
-	public function testFailToStoreItemDueToInvalidDetails()
+	public function testFailToStoreItemDueToValidationError()
 	{
-		// $v = $this->getFailingValidationStub();
-		// $this->mock('Item')->shouldReceive('validate')->once()->andReturn($v);
-  //       $json = '{"name":"Joel","details":"d"}';
-  //       $this->postUriWithException('items', $json, 400, 'Invalid detail'); 
-
-
-  //       $response = $this->post('items', $json);
-		// $this->assertError(400, 'details');
-
-		// $mock = \Mockery::mock('Validator');
-		// $mock->shouldReceive('make')->once()->andReturn(False);
-
-//		$this->mock('Validator')->shouldReceive('make')->once()->andReturn(False);
-
-        // $json = '{"name":"","details":"I like dragons."}';
-        // $response = $this->post('items', $json);
-        // $this->assertTrue($response->isClientError(), 'should reject due to invalid data');
-        // $this->assertEquals('["The name field is required."]', 
-        // 	$response->getContent(), 
-        // 	'should return error message');
+		$validator = Mockery::mock('Illuminate\Validation\Factory');
+		$validator->shouldReceive('make')->once()->andReturn($validator)
+			->shouldReceive('passes')->once()->andReturn(False)
+			->shouldReceive('errors->toJson')->once()->andReturn(JSON_ERROR);
+		Validator::swap($validator);
+        $json = '{"name":"Joel","details":"d"}';
+        $this->postUriWithException('items', $json, 400, 'error'); 
 	}
 
+	public function testFailToStoreItemDueToMultipleValidationErrors()
+	{
+		$validator = Mockery::mock('Illuminate\Validation\Factory');
+		$validator->shouldReceive('make')->once()->andReturn($validator)
+			->shouldReceive('passes')->once()->andReturn(False)
+			->shouldReceive('errors->toJson')->once()->andReturn(JSON_ERRORS);
+		Validator::swap($validator);
+        $json = '{"name":"j","details":"d"}';
+        $this->postUriWithException('items', $json, 400, array('name must be at least', 
+        	'details must be between')); 
+	}
+
+	// public function testFailToStoreItemDueToMissingTable()
+	// {
+	// 	// We do not prepare the database; this will cause it to fail
+ //        $json = '{"name":"joel","details":"dragon"}';
+ //        $this->postUriWithException('items', $json, Null, 'General error'); 
+	// }
+
 	/**
+	 * @group anow
 	 * Test successfully storing a single item
 	 * POST http://api.shop/items
 	 */
 // 	public function testStoreItem()
 // 	{
 // 		$json = '{"name":"dragon","details":"I like dragons."}';
-        // $response = $this->post('items', $json);
-// 		$this->assertTrue($response->isOK());
+// 		$response = $this->post('items', $json);
+//         // $response = $this->action('POST', 'ItemsController@store', $json);
+// 		// $this->assertTrue($response->isOK());
 // //		$response = $this->call('POST', 'items&name="test item"&details="This is a single test item"')
 // 	}
 

@@ -8,7 +8,9 @@ define('JSON_WORKS',        '{"name":"works"}');
 define('JSON_ITEM_WORKS',   '{"name":"item works"}');
 define('JSON_VENDOR_WORKS', '{"name":"vendor works"}');
 define('JSON_CART_WORKS',   '{"name":"cart works"}');
-
+define('JSON_ERROR',        '{"name":"error"}');
+define('JSON_ERRORS',       '{"name":["The name must be at least 2 characters."],
+                                "details":["The details must be between 4 - 250 characters."]}');
 class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
     /**************************************************************************
@@ -147,10 +149,12 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     {
         try {
             $result = $this->action('GET', $action, $params);
-        } catch( HttpException $e ) {
-            $this->assertEquals($expectedStatusCode, $e->getStatusCode());
-            $this->assertContains($expectedError, $e->getMessage());
+        } catch ( HttpException $e ) {
+            $this->handleException($e, $expectedStatusCode, $expectedError); 
             return;
+        } catch ( Exception $e ) {
+            $this->handleException($e, $expectedStatusCode, $expectedError); 
+            return;            
         }
         $this->assertTrue(False, 'should throw an exception getting '.$action. ' with parameters '.$params);
     }
@@ -160,12 +164,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         try {
             $this->call('POST', $uri, $params, array(), array(), $json);
         } catch ( HttpException $e ) {
-            $this->assertEquals($expectedStatusCode, $e->getStatusCode());
-            $this->assertContains($expectedError, $e->getMessage());
+            $this->handleException($e, $expectedStatusCode, $expectedError); 
             return;
+        } catch ( Exception $e ) {
+            $this->handleException($e, $expectedStatusCode, $expectedError); 
+            return;            
         }
         $this->assertTrue(False, 'should throw an exception posting '.$uri. ' with parameters '.$json);
     }
+
 
 
     /*********************************************************************************
@@ -284,9 +291,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
 
 
-
-
-
     /**********************************************************************************
      * Helper functions
      */
@@ -327,6 +331,30 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
             if (stripos($item->$field, $needle) !== False )
                 return True;
         return False;
+    }
+
+
+    /**
+     * Check the status code (if applicable) and error message to make sure
+     * they match what was expected.
+     * 
+     * @param  $exception          Some type of exception (HttpException, Exception, etc.)
+     * @param  $expectedStatusCode Number representing expected return code (Null for none)
+     * @param  $expectedError      String (or array) for expected return message(s)
+     */
+    private function handleException($exception, $expectedStatusCode, $expectedError)
+    {
+        if(method_exists($exception, 'getStatusCode') && $expectedStatusCode) {
+            $this->assertEquals($expectedStatusCode, $exception->getStatusCode());
+        }
+        if (is_array($expectedError)) {
+            foreach($expectedError as $expected) {
+                $this->assertContains($expected, $exception->getMessage());
+            }
+            return;
+        }
+        $this->assertContains($expectedError, $exception->getMessage());
+        return;
     }
 
 }

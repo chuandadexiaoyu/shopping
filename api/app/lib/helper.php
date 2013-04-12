@@ -1,16 +1,20 @@
 <?php
 
+// include this with:
+// require_once app_path().'/lib/helper.php';
 
 // Helper functions ----------------------------------------------------
-
-function getDelimitedValidationMessages($validator, $delimiter=', ')
-{
-        // if (!$validator->passes()) {
-        //     $return = '';
-        //     foreach($validator->errors()->all(':message') as $message) {
-        //         $return .= $message . ', ';
-        //     }
-        //     App::abort(400, substr($return, 0, -2));      
-        // }
-    // return True;   
+ 
+if (!function_exists('getJsonStringForError')) {
+    function getJsonStringForError($exception)
+    {
+        $data = json_decode($exception->getMessage());
+        if (!$data) {
+            $json = array('errors' => array($exception->getMessage()));
+        } else {
+            $json = array('errors' => $data);
+        }
+        return $json;
+    }
 }
+

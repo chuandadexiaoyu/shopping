@@ -40,4 +40,9 @@ class Item extends BaseModel
         return $this->belongsToMany('Cart', 'cart_items');
     }
 
+    public static function create(array $attributes)
+    {
+        return parent::create($attributes);
+    }
+
 }

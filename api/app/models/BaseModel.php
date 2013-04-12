@@ -20,16 +20,17 @@ class BaseModel extends Eloquent
             return parent::find($findWhat);            
         } 
 
-        $params  = $this->getInputParameters($findWhat);
+        $params = $this->getInputParameters($findWhat);
 
         // Validate the input
         $context = $context ?: $this->defaultRule;
         $validator = $this->validate($params, $context);
         if (!$validator->passes()) {
-            App::abort(400, $this->getDelimitedValidationMessages($validator, ', '));
+            App::abort(400, $validator->errors()->toJson());
         }
 
         // TODO: Figure out how to use other parameters: =, >=, <=, >, < 
+        // These should be called via items/name==c, or name=>=c
         // search for submitted parameters
         $table = $this->getTable();
         $foundItems = $this->from($table);
@@ -145,16 +146,6 @@ class BaseModel extends Eloquent
 
         return True;
     }
-
-    private function getDelimitedValidationMessages($validator, $delineator=', ')
-    {
-        $return = '';
-        foreach($validator->errors()->all(':message') as $message) {
-            $return .= $message . $delineator;
-        }
-        return substr($return, 0, -(strlen($delineator)));      
-    }
-
 
 }
 

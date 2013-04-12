@@ -42,7 +42,6 @@ class ItemsController extends BaseController
 
     /**
      * Store a newly created resource to the database.
-     *
      * @return Response
      */
     public function store()
@@ -53,12 +52,26 @@ class ItemsController extends BaseController
         }
 
         // attempt to validate
-        $validator = $this->items->validate($request, 'edit');
+        $validator = $this->items->validate($request, 'new');
         if (!$validator->passes()) {
-            App::abort(400, $this->getDelimitedValidationMessages($validator));
+            App::abort(400, $validator->errors()->toJson());
         }
 
-        // echo 'validated';
+        $item = $this->items->create($request);
+        //  Item::create( array(
+        //     'name'    => Input::get('name'),
+        //     'details' => Input::get('details'),
+        //     'sku'     => Input::get('sku'),
+        // ));
+
+        if(!$item)
+            App::abort(500, 'Unable to create item');
+
+        var_dump($item);
+        return $item;
+
+        // Item::create()
+        echo 'validated';
         return;
         // $this->items->create(array(
         //  'name' => Input::get('name'),

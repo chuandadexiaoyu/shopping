@@ -7,11 +7,8 @@
  */
 class HelperTest extends TestCase 
 {
-    public function testGetDelimitedValidationMessagesRequiresValidator()
+    public function testWorks()
     {
-        return;     // TODO: Figure out how to call functions
-        $validator = Validator::make(array('a'=>'a'), array('a', 'between:4,5'));
-        $s = getDelimitedValidationMessages($validator);
     }
 
 }

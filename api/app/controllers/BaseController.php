@@ -29,15 +29,5 @@ class BaseController extends Controller
     //     $json = array($message);
     //     return Response::json($json)->setStatusCode(200);
     // } 
-    // 
-    
-    protected function getDelimitedValidationMessages($validator, $delineator=', ')
-    {
-        $return = '';
-        foreach($validator->errors()->all(':message') as $message) {
-            $return .= $message . $delineator;
-        }
-        return substr($return, 0, -(strlen($delineator)));      
-    }
- 
+    //  
 }
