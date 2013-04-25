@@ -11,25 +11,61 @@
 |
 */
 
-App::bind('ItemRepositoryInterface', 'EloquentItemRepository');
-App::bind('VendorRepositoryInterface', 'EloquentVendorRepository');
+// Route::resource('itemvendors', 'ItemvendorsController');
+// Route::resource('cartitems', 'CartitemsController');
 
-Route::get('/', array('as'=>'home', 'uses'=>'UsersController@getLogin'));
-Route::get('/user/login', array('as'=>'login', 'uses'=>'UsersController@getLogin'));
-Route::get('/user/logout', array('as'=>'logout', 'uses'=>'UsersController@getLogout'));
 
-Route::get('/items/{item}/vendors', array('uses'=>'ItemsController@vendors'));
-Route::get('/items/{item}/carts', array('uses'=>'ItemsController@carts'));
-Route::get('/items/find', array('uses'=>'ItemsController@test'));
 
-Route::get('/vendors/{item}/items', array('uses'=>'VendorsController@items'));
+// Route::get('/', array('as' => 'home', 'uses'=>'AuthController@getHomepage'));
+// Route::get('login', array('as' => 'login', 'uses'=>'AuthController@getLogin'));
+// Route::post('login', array('uses' => 'AuthController@postLogin'));
+// Route::get('logout', array('as' => 'logout', 'uses'=>'AuthController@getLogout'));
 
-Route::post('/user/login', array('before'=>'csrf', 'uses'=>'UsersController@postLogin'));
+Route::get('/', array('as' => 'home', function(){
+    return View::make('home');
+}));
 
-Route::resource('users', 'UsersController');
-Route::resource('carts', 'CartsController');
-Route::resource('accounts', 'AccountsController');
-Route::resource('items', 'ItemsController');
-Route::resource('vendors', 'VendorsController');
-Route::resource('item_vendors', 'ItemVendorsController');
-Route::resource('cart_items', 'Cart_itemsController');
+
+// API Routes ------------------------------------------------------------
+
+Route::group(array('before' => 'api.auth'), function()
+{
+    // Accounts ----------------------------------------------
+    Route::resource('accounts', 'AccountsController');
+    Route::get('accounts/{id}/items', array('uses'=>'AccountsController@items'));
+
+    // Carts -------------------------------------------------
+    Route::resource('carts', 'CartsController', array(
+        'only' => array('index','show','store','update','destroy')));
+    Route::get('carts/{id}/items', array('uses'=>'CartsController@items'));
+    Route::get('carts/{id}/user', array('uses'=>'CartsController@user'));
+
+    // Items -------------------------------------------------
+    Route::resource('items', 'ItemsController', array(
+        'only' => array('index','show','store','update','destroy')));
+    Route::get('items/{id}/vendors', array('uses'=>'ItemsController@vendors'));
+    Route::get('items/{id}/carts', array('uses'=>'ItemsController@carts'));
+    Route::get('items/{id}/accounts', array('uses'=>'ItemsController@accounts'));
+
+    // ShoppingDate -------------------------------------------------
+    Route::get('dates/next', array('uses'=>'ShoppingDatesController@next'));
+    Route::get('dates/{id}/carts', array('uses'=>'ShoppingDatesController@carts'));
+    Route::resource('dates', 'ShoppingDatesController', array(
+        'only' => array('index','show','store','update','destroy')));
+
+    // Users -------------------------------------------------
+    Route::resource('users', 'UsersController', array(
+        'only' => array('index','show','store','update','destroy')));
+    Route::get('users/{id}/carts', array('uses'=>'UsersController@carts'));
+
+    // Vendors -----------------------------------------------
+    Route::resource('vendors', 'VendorsController', array(
+        'only' => array('index','show','store','update','destroy')));
+    Route::get('vendors/{id}/items', array('uses'=>'VendorsController@items'));
+
+});
+
+
+
+
+

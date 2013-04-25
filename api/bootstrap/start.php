@@ -26,9 +26,10 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
-	'dev' => array('Info_Tech','development','*.shop'),
+	'dev' => array('Database','development','*.shop'),
 
 ));
+
 
 /*
 |--------------------------------------------------------------------------

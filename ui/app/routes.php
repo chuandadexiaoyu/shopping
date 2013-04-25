@@ -11,7 +11,11 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', array('as' => 'home', 'uses'=>'HomeController@getHomepage'));
+Route::get('login', array('as' => 'login', 'uses'=>'AuthController@getLogin'));
+Route::post('login', array('uses' => 'AuthController@postLogin'));
+Route::get('logout', array('as' => 'logout', 'uses'=>'AuthController@getLogout'));
+
+Route::get('/entry', array('as' => 'entry', 'uses'=>'EntryController@index'));
+Route::get('/report', array('as' => 'report', 'uses'=>'ReportController@index'));
+Route::get('/admin', array('as' => 'admin', 'uses'=>'AdminController@index', 'before'=>'auth.admin'));

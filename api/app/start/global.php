@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 |--------------------------------------------------------------------------
 | Register The Laravel Class Loader
@@ -13,6 +14,7 @@
 
 ClassLoader::addDirectories(array(
 
+	app_path().'/commands',
 	app_path().'/controllers',
 	app_path().'/models',
 	app_path().'/database/seeds',
@@ -47,43 +49,21 @@ Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 |
 */
 
-if (!function_exists('getJsonStringForError')) {
-    function getJsonStringForError($exception)
-    {
-        $data = json_decode($exception->getMessage());
-        if (!$data) {
-            $json = array('errors' => array($exception->getMessage()));
-        } else {
-            $json = array('errors' => $data);
-        }
-        return $json;
-    }
-}
+// App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, $code)
+App::missing(function($exception)
+{
+    Log::error($exception);
+
+    if ($exception->getMessage())
+        return Response::make($exception->getMessage(), 404);
+
+    return Response::make('Page '.$_SERVER['REQUEST_URI'].' not found', 404); 
+
+});
 
 App::error(function(Exception $exception, $code)
 {
-	Log::error($exception);
-    $json = getJsonStringForError($exception);
-    return Response::json($json)->setStatusCode(500);
-});
-
-App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $exception, $code)
-{
     Log::error($exception);
-    $json=getJsonStringForError($exception);
-    return Response::json($json)->setStatusCode($exception->getStatusCode());
-});
-
-App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException $exception, $code)
-{
-    Log::error($exception);
-
-    if ($exception->getMessage()) {
-        $json=getJsonStringForError($exception);
-    } else {
-        $json = array('errors' => array('Page '.Request::getUri().' was not found.'));
-    }
-    return Response::json($json)->setStatusCode($exception->getStatusCode());
 });
 
 
@@ -100,5 +80,3 @@ App::error(function(Symfony\Component\HttpKernel\Exception\NotFoundHttpException
 */
 
 require __DIR__.'/../filters.php';
-
-

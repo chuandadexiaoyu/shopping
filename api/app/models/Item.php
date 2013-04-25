@@ -1,48 +1,31 @@
 <?php
 
-class Item extends BaseModel
+class Item extends Eloquent 
 {
-    protected $table = 'items';
+    protected $guarded = array();
 
-    public $validationRules = array(
-        'fields' => array(
-            'id',
-            'name',
-            'details',
-            'sku',    
-        ),
-        'view' => array(
-            'id'        => 'integer|min:0',
-            'name'      => 'between:1,40',
-            'details'   => 'between:1,250',
-            'sku'       => 'between:1,20'
-        ),
-        'new' => array(
-            'name'      => 'required|min:2|max:40',
-            'details'   => 'between:4,250',
-            'sku'       => 'between:4,20'
-        ),
-        'edit' => array(
-            'name'      => 'min:2|max:40',
-            'details'   => 'between:4,250',
-            'sku'       => 'between:4,20'
-        ),
+    public static $rules = array(
+        'name'      => 'required|max:40',
+        'details'   => 'max:250',
+        'sku'       => 'max:20',
     );
 
     public function vendors()
     {
-        return $this->belongsToMany('Vendor', 'item_vendors')
-            ->withPivot(array('confirmed', 'last_known_price'));
+        return $this->belongsToMany('Vendor', 'itemvendors', 'vendor_id', 'item_id')
+            ->withPivot(array('confirmed','last_known_price'));
     }
 
     public function carts()
     {
-        return $this->belongsToMany('Cart', 'cart_items');
+        return $this->belongsToMany('Cart', 'cartitems', 'item_id', 'cart_id')
+            ->withPivot(array('quantity','price_approx','price_actual'));        
     }
-
-    public static function create(array $attributes)
+    
+    public function accounts()
     {
-        return parent::create($attributes);
+        return $this->belongsToMany('Account', 'cartitems', 'item_id', 'acct_id')
+            ->withPivot(array('quantity','price_approx','price_actual'));        
     }
 
 }

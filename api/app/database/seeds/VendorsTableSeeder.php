@@ -2,11 +2,9 @@
 
 class VendorsTableSeeder extends Seeder {
 
-	public function run()
-	{
-        DB::table('vendors')->delete();
-
-		$vendors = array(
+    public function run()
+    {
+        $vendors = array(
             array(
                 'id' => 1,
                 'name' => 'Home Depot',
@@ -121,9 +119,10 @@ class VendorsTableSeeder extends Seeder {
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
             ),
-		);
+        );
 
-		DB::table('vendors')->insert($vendors);
-	}
+        // Uncomment the below to run the seeder
+        DB::table('vendors')->insert($vendors);
+    }
 
 }

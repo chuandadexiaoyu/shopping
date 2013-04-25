@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'shopping',
+			'database'  => 'kata_shopping',
 			'username'  => 'kata_user',
 			'password'  => 'kata_pw',
 			'charset'   => 'utf8',
@@ -71,7 +71,7 @@ return array(
 			'password' => '',
 			'charset'  => 'utf8',
 			'prefix'   => '',
-            'schema'   => 'public',
+			'schema'   => 'public',
 		),
 
 		'sqlsrv' => array(
@@ -110,6 +110,8 @@ return array(
 	*/
 
 	'redis' => array(
+
+		'cluster' => true,
 
 		'default' => array(
 			'host'     => '127.0.0.1',

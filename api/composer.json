@@ -1,7 +1,8 @@
 {
 	"require": {
 		"laravel/framework": "4.0.*",
-		"mockery/mockery": "dev-master"
+        "way/generators": "dev-master",
+        "mockery/mockery": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -13,6 +14,9 @@
 			"app/tests",
 			"app/lib"
 		]
+	},
+	"scripts": {
+		"post-update-cmd": "php artisan optimize"
 	},
 	"minimum-stability": "dev"
 }

@@ -1,12 +1,10 @@
 <?php
 
-class ItemVendorsTableSeeder extends Seeder {
+class ItemvendorsTableSeeder extends Seeder {
 
-	public function run()
-	{
-        DB::table('item_vendors')->delete();
-
-		$item_vendors = array(
+    public function run()
+    {
+        $itemvendors = array(
             array(
                 'item_id'   =>  1,
                 'vendor_id' =>  5,
@@ -20,6 +18,14 @@ class ItemVendorsTableSeeder extends Seeder {
                 'vendor_id' =>  3,
                 'confirmed' =>  1,
                 'last_known_price' =>  4.5,
+                'created_at' => new DateTime(),
+                'updated_at' => new DateTime(),
+            ),
+            array(
+                'item_id'   =>  5,
+                'vendor_id' =>  1,
+                'confirmed' =>  0,
+                'last_known_price' => Null   ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
             ),
@@ -38,7 +44,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' => Null   ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  3,
                 'vendor_id' => 13,
@@ -46,7 +52,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' =>  Null  ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  1,
                 'vendor_id' =>  2,
@@ -70,7 +76,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' =>   Null ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  8,
                 'vendor_id' => 16,
@@ -86,7 +92,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' =>  Null  ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  6,
                 'vendor_id' => 12,
@@ -94,7 +100,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' => Null   ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  2,
                 'vendor_id' =>  2,
@@ -102,7 +108,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' =>  5 ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   =>  3,
                 'vendor_id' =>  6,
@@ -110,7 +116,7 @@ class ItemVendorsTableSeeder extends Seeder {
                 'last_known_price' =>  Null  ,
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
-            ), 
+            ),
             array(
                 'item_id'   => 10,
                 'vendor_id' => 18,
@@ -175,9 +181,10 @@ class ItemVendorsTableSeeder extends Seeder {
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
             ),
-		);
+        );
 
-		DB::table('item_vendors')->insert($item_vendors);
-	}
+        // Uncomment the below to run the seeder
+        DB::table('itemvendors')->insert($itemvendors);
+    }
 
 }

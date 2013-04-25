@@ -13,6 +13,7 @@
 
 ClassLoader::addDirectories(array(
 
+	app_path().'/commands',
 	app_path().'/controllers',
 	app_path().'/models',
 	app_path().'/database/seeds',
@@ -32,7 +33,7 @@ ClassLoader::addDirectories(array(
 
 $logFile = 'log-'.php_sapi_name().'.txt';
 
-Log::useDailyFiles(__DIR__.'/../storage/logs/'.$logFile);
+Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 
 /*
 |--------------------------------------------------------------------------
@@ -47,10 +48,20 @@ Log::useDailyFiles(__DIR__.'/../storage/logs/'.$logFile);
 |
 */
 
+App::missing(function($exception)
+{
+    Log::error($exception);
+
+    return Redirect::route('home')
+        ->with('flash_error', $exception->getMessage() ?: 'Page '.$_SERVER['REQUEST_URI'].' not found');
+});
+
 App::error(function(Exception $exception, $code)
 {
 	Log::error($exception);
 });
+
+
 
 /*
 |--------------------------------------------------------------------------

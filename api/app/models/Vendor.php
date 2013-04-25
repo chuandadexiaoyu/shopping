@@ -1,9 +1,16 @@
 <?php
 
-class Vendor extends Eloquent {
+class Vendor extends Eloquent 
+{
+    protected $guarded = array();
 
-    // function items()
-    // {
-    //     return $this->belongsToMany('Item', 'Item_vendor');
-    // }
+    public static $rules = array(
+        'name'  => 'required|max:40'
+    );
+
+    public function items()
+    {
+        return $this->belongsToMany('Item', 'itemvendors', 'item_id', 'vendor_id')
+            ->withPivot(array('confirmed','last_known_price'));
+    }
 }

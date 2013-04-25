@@ -2,11 +2,9 @@
 
 class ItemsTableSeeder extends Seeder {
 
-	public function run()
-	{
-        DB::table('items')->delete();
-
-		$items = array(
+    public function run()
+    {
+        $items = array(
             array(
                 'id' => 1,
                 'name' => 'Windex',
@@ -119,9 +117,10 @@ class ItemsTableSeeder extends Seeder {
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
             ),
-		);
+        );
 
-		DB::table('items')->insert($items);
-	}
+        // Uncomment the below to run the seeder
+        DB::table('items')->insert($items);
+    }
 
 }

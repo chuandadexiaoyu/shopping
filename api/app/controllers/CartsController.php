@@ -1,58 +1,24 @@
 <?php
 
-class CartsController extends BaseController {
+class CartsController extends BaseController 
+{
+    public $name = 'Cart';
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		return Cart::all();
-	}
+    public function __construct(Cart $data)
+    {   
+        $this->data = $data;
+    }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
+    public function items($id)
+    {
+        $found = $this->findOrFail($id);
+        return $found->items;
+    }
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		return Cart::find($id);
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
+    public function user($id)
+    {
+        $found = $this->findOrFail($id);
+        return $found->user;
+    }
 
 }

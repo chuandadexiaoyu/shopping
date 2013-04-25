@@ -1,0 +1,64 @@
+@CHARSET "ISO-8859-1";
+
+/*
+  kdb.css
+
+  Kalani Database styles
+  Based on the 960 Grid System (http://960.gs)
+
+  We use this color palette:
+        Name      Web-Safe  RGB           Hex
+        Azure     0099CC    0,137,207     #0089CF
+        Ocean     00FFCC    124,204,191   #7CCCBF
+        Leaf      66FF00    131,179,65    #83B341
+        Hibiscus  FF9900    252,175,23    #FCAF17
+        Mango     CC6600    223,109,39    #DF6D27
+        Fire      990000    160,30,33     #A01E21
+        Orchid    FF0066    237,12,110    #ED0C6E
+        Lava      000000    50,35,3       #322303
+        White     FFFFFF    255,255,255   #FFFFFF
+
+*/
+
+
+/*-- other stuff --*/
+body {
+    padding-top: 60px;
+    color: #322303;
+    background-color: #322303;
+}
+
+.container-fluid .row-fluid {
+    background-color: #EEFFFF;
+}
+
+.container .row {
+    background-color: #EEFFFF;
+}
+
+.navbar .brand {
+    margin-left: -10px;
+}
+
+#sidebar {
+    background-color: #DF6D27;
+}
+
+.fullWidth {
+    width: 95%;
+}
+
+#login_dialog label {
+    display: none;
+}
+
+#login_dialog li {
+    list-style: none;
+}
+
+#flash_error {
+    background-color: #FCAF17;
+    border: 1px solid #322303;
+    padding: 6px;
+    margin-bottom: 20px;
+}

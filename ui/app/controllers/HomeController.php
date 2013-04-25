@@ -1,23 +1,18 @@
 <?php
 
-class HomeController extends BaseController {
+class HomeController extends BaseController 
+{
+    public function getHomepage()
+    {
+        if (!Auth::user())
+            return Redirect::route('login');
 
-	/*
-	|--------------------------------------------------------------------------
-	| Default Home Controller
-	|--------------------------------------------------------------------------
-	|
-	| You may wish to use controllers instead of, or in addition to, Closure
-	| based routes. That's great! Here is an example controller method to
-	| get you started. To route to this controller, just add the route:
-	|
-	|	Route::get('/', 'HomeController@showWelcome');
-	|
-	*/
+        if (Auth::user()->username=='admin')
+            return Redirect::route('admin');
 
-	public function showWelcome()
-	{
-		return View::make('hello');
-	}
-
+        if (Auth::user()->homepage && Auth::user()->homepage!='admin')
+            return Redirect::to(Auth::user()->homepage);
+        
+        return Redirect::route('entry');
+    }
 }

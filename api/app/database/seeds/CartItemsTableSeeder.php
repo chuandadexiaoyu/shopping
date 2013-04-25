@@ -1,11 +1,10 @@
 <?php
 
-class CartItemsTableSeeder extends Seeder {
+class CartitemsTableSeeder extends Seeder {
 
-	public function run()
-	{
-        DB::table('cart_items')->delete();
-		$cart_items = array(
+    public function run()
+    {
+        $cartitems = array(
             array(
                 'cart_id' => 1,
                 'item_id' => 9,
@@ -123,17 +122,10 @@ class CartItemsTableSeeder extends Seeder {
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
             ),
-            array(
-                'cart_id' => 7,
-                'item_id' => 10,
-                'acct_id' => 58250,
-                'quantity'=> 10,
-                'price_approx' => 15,
-                'created_at' => new DateTime,
-                'updated_at' => new DateTime,
-            ),
-		);
+        );
 
-		DB::table('cart_items')->insert($cart_items);
-	}
+        // Uncomment the below to run the seeder
+        DB::table('cartitems')->insert($cartitems);
+    }
+
 }

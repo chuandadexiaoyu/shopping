@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * The integration tests rely on sample data being in the database.
  * They run significantly slower than unit tests, but check several
