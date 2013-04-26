@@ -12,43 +12,21 @@
     </thead>
     <tbody>
         @foreach ($accounts as $account)
-        <tr class="loaded" data-pk="{id}">
-            <td>
-                <a href="#" class="btn_expand" title="Items charged to this account" data-pk="{{$account->number}}">
-                <i class="icon-chevron-down"></i></a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="number" data-pk="{{$account->number}}">
-                    {{$account->number ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="name" data-pk="{{$account->number}}">
-                    {{$account->name ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="#" class="btn_del" title="Delete this record"><i class="icon-remove"></i></a>
-            </td>
+        <tr class="loaded" data-pk="{{$account->number}}">
+            {{ writeDetailControlInCell('Items charged to this account') }}
+            {{ writeDataFieldInCell('number', $account->number, $account->number)}}
+            {{ writeDataFieldInCell('name', $account->name, $account->number)}}
+            {{ writeDeleteButtonInCell() }}
         </tr>
         @endforeach
 
         <tr class='insertion_point'></tr>
         <tr>
             <td></td>
-            <td>{{ Form::text('number',Null, array('class'=>'new fullWidth','placeholder'=>'New Account')) }}</td>
-            <td>{{ Form::text('name',Null, array('class'=>'new fullWidth','placeholder'=>'Account Name')) }}</td>
-            <td>
-                <a href="#" class="btn_add" title="Add an account"><i class="icon-ok"></i></a>&nbsp; &nbsp;
-                <a href="#" class="btn_reset" title="Reset fields"><i class="icon-edit"></i></a>
-            </td>
+            {{ writeTextFieldInCell('number', 'New Account') }}
+            {{ writeTextFieldInCell('name', 'Account Name') }}
+            {{ writeNewRecordControlsInCell('Add a new account') }}
         </tr>
     </tbody>
 </table>
 </form>
-
-<script>
-var account_template =
-    '<tr class="loaded" data-pk="{id}">' +
-            '<td><a href="#" class="ed" data-name="id" data-pk="{id}">{id}</a></td>' +
-            '<td><a href="#" class="ed" data-name="name" data-pk="{id}">{name}</a></td>' +
-            '<td><a href="#" class="btn_delete" title="Delete this record" data-pk="{id}"><i class="icon-remove"></i></td></tr>';
-</script>

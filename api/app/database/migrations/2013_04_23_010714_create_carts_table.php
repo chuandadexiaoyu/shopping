@@ -16,6 +16,7 @@ class CreateCartsTable extends Migration {
             $table->increments('id')->unsigned();
             $table->integer('user_id');
 			$table->date('shopping_date');
+            $table->boolean('deleted')->default(False);
             $table->timestamps();
         });
     }

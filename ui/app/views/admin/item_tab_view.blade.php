@@ -12,47 +12,23 @@
     </thead>
     <tbody>
         @foreach ($items as $item)
-        <tr class="loaded" data-pk="{id}">
-            <td>
-                <a href="#" class="btn_expand" title="Vendors for this item" data-pk="{{$item->id}}">
-                <i class="icon-chevron-down"></i></a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="sku" data-pk="{{$item->id}}">
-                    {{$item->sku ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="name" data-pk="{{$item->id}}">
-                    {{$item->name ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="details" data-pk="{{$item->id}}">
-                    {{$item->details ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="#" class="btn_del" title="Delete this record"><i class="icon-remove"></i></a>
-            </td>
-        </tr>
+            <tr class="loaded" data-pk="{{$item->id}}">
+                {{ writeDetailControlInCell('Vendors for this item') }}
+                {{ writeDataFieldInCell('sku', $item->sku, $item->id)}}
+                {{ writeDataFieldInCell('name', $item->name, $item->id)}}
+                {{ writeDataFieldInCell('details', $item->details, $item->id)}}
+                {{ writeDeleteButtonInCell() }}
+            </tr>
         @endforeach
+
         <tr class='insertion_point'></tr>
+        
         <tr>
             <td></td>
-            <td>
-                {{ Form::text('sku',Null, 
-                    array('class'=>'new fullWidth','placeholder'=>'New SKU')) }}
-            </td>
-            <td>
-                {{ Form::text('name',Null, 
-                    array('class'=>'new fullWidth','placeholder'=>'New Item')) }}
-            </td>
-            <td>
-                {{ Form::text('details',Null, 
-                    array('class'=>'new fullWidth','placeholder'=>'New Item Description')) }}
-            </td>
-            <td>
-                <a href="#" class="btn_add" title="Add an account"><i class="icon-ok"></i></a>
-                <a href="#" class="btn_reset" title="Reset fields"><i class="icon-edit"></i></a>
-            </td>
+            {{ writeTextFieldInCell('sku', 'New SKU') }}
+            {{ writeTextFieldInCell('name', 'New Item') }}
+            {{ writeTextFieldInCell('details', 'New Item Description') }}
+            {{ writeNewRecordControlsInCell('Add a new item') }}
         </tr>
     </tbody>
 </table>

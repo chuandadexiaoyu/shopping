@@ -15,6 +15,7 @@ class CreateVendorsTable extends Migration {
         Schema::create('vendors', function(Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->string('name',40);
+            $table->boolean('deleted')->default(False);
             $table->timestamps();
         });
     }

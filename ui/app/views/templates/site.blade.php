@@ -12,6 +12,8 @@
     <script src="assets/js/jquery.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/bootstrap-editable.js"></script>
+    <script src="assets/js/kdb_shopping.js"></script>
+
 </head>
 
 <body>

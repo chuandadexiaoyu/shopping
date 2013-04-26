@@ -10,28 +10,17 @@
     </thead>
     <tbody>
         @foreach ($vendors as $vendor)
-        <tr class="loaded" data-pk="{id}">
-            <td>
-                <a href="#" class="btn_expand" title="Items sold by this vendor" data-pk="{{$vendor->id}}">
-                <i class="icon-chevron-down"></i></a>
-            </td>
-            <td>
-                <a href="" class="ed" data-name="sku" data-pk="{{$vendor->id}}">
-                    {{$vendor->name ?: str_repeat('&nbsp;',20) }}</a>
-            </td>
-            <td>
-                <a href="#" class="btn_del" title="Delete this record"><i class="icon-remove"></i></a>
-            </td>
+        <tr class="loaded" data-pk="{{$vendor->id}}">
+            {{ writeDetailControlInCell('Items sold by this vendor') }}
+            {{ writeDataFieldInCell('name', $vendor->name, $vendor->id)}}
+            {{ writeDeleteButtonInCell() }}
         </tr>
         @endforeach
         <tr class='insertion_point'></tr>
         <tr>
             <td></td>
-            <td>{{ Form::text('name',Null, array('class'=>'new fullWidth','placeholder'=>'New Vendor')) }}</td>
-            <td>
-                <a href="#" class="btn_add" title="Add a new vendor"><i class="icon-ok"></i></a>
-                <a href="#" class="btn_reset" title="Reset fields"><i class="icon-edit"></i></a>
-            </td>
+            {{ writeTextFieldInCell('name', 'New Vendor') }}
+            {{ writeNewRecordControlsInCell('Add a new vendor') }}
         </tr>
     </tbody>
 </table>

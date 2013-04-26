@@ -11,7 +11,7 @@ class BaseController extends Controller
      */
     public function index()
     {
-        return $this->data->all();
+        return $this->data->where('deleted','=','0')->get();
     }
 
     /**
@@ -35,7 +35,8 @@ class BaseController extends Controller
     public function destroy($id)
     {
         $found = $this->findOrFail($id);
-        $found->delete();
+        $found->deleted = True;
+        $found->save();
     }
 
 
@@ -87,6 +88,9 @@ class BaseController extends Controller
 
         if (!$found)
             App::abort(404, $this->name.' record '.$id.' was not found');
+
+        if ($found->deleted)
+            App::abort(404, $this->name.' record '.$id.' has been deleted');
 
         return $found;
     }

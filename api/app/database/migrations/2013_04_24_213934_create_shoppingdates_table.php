@@ -15,6 +15,7 @@ class CreateShoppingdatesTable extends Migration {
         Schema::create('shoppingdates', function(Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->date('shopping_date');
+            $table->boolean('deleted')->default(False);
             $table->timestamps();
         });
     }

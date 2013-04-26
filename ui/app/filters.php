@@ -45,6 +45,9 @@ Route::filter('auth.basic', function()
 });
 
 Route::filter('auth.admin', function(){
+    if (!Auth::check())
+        return Redirect::route('login');
+    
     if (Auth::user()->username != 'admin') {
         return Redirect::route('home');
     }

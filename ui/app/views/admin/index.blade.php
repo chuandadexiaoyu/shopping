@@ -20,6 +20,12 @@
             @include('admin/date_tab_view')
         </div><!-- tabDates -->
 
+
+        <div class="tab-pane" id="tabAdmin">
+            <h3>Admin</h3>
+            <p>This section is for other administrative tasks.</p>
+        </div><!-- tabAdmin -->
+
         <div class="tab-pane" id="tabItems">
             @include('admin/item_tab_view')
         </div><!-- tabItems -->
@@ -35,11 +41,6 @@
         <div class="tab-pane" id="tabUsers">
             @include('admin/user_tab_view')
         </div><!-- tabUsers -->
-
-        <div class="tab-pane" id="tabAdmin">
-            <h3>Admin</h3>
-            <p>This section is for other administrative tasks.</p>
-        </div><!-- tabAdmin -->
 
     </div><!-- tab-content -->
 </div><!-- tabbable -->

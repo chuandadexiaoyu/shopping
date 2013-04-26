@@ -17,7 +17,8 @@ class CreateItemsTable extends Migration {
             $table->string('name',40);
 			$table->string('details',250)->nullable();
 			$table->string('sku',20)->nullable();
-            $table->timestamps();
+            $table->boolean('deleted')->default(False);
+           $table->timestamps();
         });
     }
 

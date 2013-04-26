@@ -15,6 +15,7 @@ class CreateAccountsTable extends Migration {
         Schema::create('accounts', function(Blueprint $table) {
             $table->integer('number')->unsigned();
             $table->string('name',40);
+            $table->boolean('deleted')->default(False);
             $table->timestamps();
         });
     }

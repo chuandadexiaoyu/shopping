@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration {
 			$table->string('nickname', 40);
 			$table->string('password', 128);
 			$table->string('homepage', 40)->nullable();
+            $table->boolean('deleted')->default(False);
             $table->timestamps();
         });
     }
