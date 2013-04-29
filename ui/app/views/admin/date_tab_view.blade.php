@@ -12,7 +12,8 @@
         @foreach ($dates as $date)
         <tr class="loaded" data-pk="{{$date->id}}">
             {{ writeDetailControlInCell('Carts on this date', $date->id) }}
-            {{ writeDataFieldInCell('shopping_date', $date->shopping_date, $date->id)}}
+            {{ writeDataFieldInCell('shopping_date', DateFormatter::long($date->shopping_date), 
+                $date->id, 'dt')}}
             {{ writeDeleteButtonInCell() }}
         </tr>
         @endforeach

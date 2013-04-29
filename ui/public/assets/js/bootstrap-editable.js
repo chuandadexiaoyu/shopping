@@ -291,7 +291,8 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                     this.options.params = $.fn.editableutils.tryParseJson(this.options.params, true);   
                     $.extend(params, this.options.params);
                 }
-
+                // $joel = this;
+                // console.log($joel);
                 if(typeof this.options.url === 'function') { //user's function
                     return this.options.url.call(this.options.scope, params);
                 } else {  

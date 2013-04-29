@@ -26,11 +26,18 @@ if (!function_exists('writeDetailControlInCell'))
 
 if (!function_exists('writeDataFieldInCell'))
 {
-    function writeDataFieldInCell($fieldName, $fieldData, $recordId)
+    function writeDataFieldInCell($fieldName, $fieldData, $recordId, $class='ed', $data_value=Null)
     {
         $fieldData = $fieldData ?: str_repeat('&nbsp;',20);
-        return '<td><a href="" class="ed" data-name="'.$fieldName.'" data-pk="'.$recordId.'">'
-                .$fieldData.'</a></td>';
+        $return = '<td><a href="" class="'.$class
+            .'" data-name="'.$fieldName
+            .'" data-pk="'.$recordId
+            .'" data-pg="vendor"';
+
+        if ($data_value)
+            $return .= 'data-value="'.$data_value.'"';
+
+        return $return.'>'.$fieldData.'</a></td>';
     }
 }
 

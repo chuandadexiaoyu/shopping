@@ -1,4 +1,17 @@
-$(function(){
+$(function()
+{
+
+    function findInstanceOf(obj)
+    {
+        for(var v in window){
+            try{
+                if(window[v] instanceof obj){
+                    return v;
+                }
+            }catch(e){}
+        }
+        return false;
+    }
 
     function getContext($for)
     {
@@ -7,48 +20,22 @@ $(function(){
             table: $for.parents('table').attr('id')
         }
         return JSON.stringify($context);
-    }
+    };
 
-
-    function setup_editables()
-    {
-        // Instructions for in-place editing
-        // $('.ed').editable({
-        //     type: 'text',
-        //     url:  '#',
-        //     params: {'table': $(this).parents('table').attr('id'), 'foo':'bar' },
-        //     ajaxOptions: {
-        //         type: 'put',
-        //         dataType: 'json',
-        //         // params: $(this).parents('table').attr('id')
-        //         // params: {'table': $(this).parents('table').attr('id')}
-        //     }
-        // });
-
-        // $('.hp').editable({
-        //     type: 'select',
-        //     url: 'admin/'+tab_name+'/edit',
-        //     source: [
-        //         {value: 'admin', text: 'admin'},
-        //         {value: 'entry', text: 'entry'},
-        //         {value: 'report', text: 'report'}
-        //     ],
-        // });
-//      console.log('editables set up');
-    }
 
     // When a row is hovered over, show the buttons
-    $('tr').hover(
-        function() {
-            $(this).find('.btn_del').css('display', 'block');
-        },
-        function() {
-            $(this).find('.btn_del').css('display', 'none');
-        }
-    );
+    $table = $('table');
+    $table.on('mouseenter', 'tr', function(){ $(this).find('.btn_del').show(); })
+          .on('mouseleave', 'tr', function(){ $(this).find('.btn_del').hide(); });
+
+    // clear the fields when the clear button is pressed
+    $table.on('click', '.btn_reset', function(){
+        $(this).parents('form').find(':input').val('');
+        return false;
+    });
 
     // Delete a record when the delete button is pressed
-    $('.btn_del').click(function() {
+    $table.on('click', '.btn_del', function() {
         $this = $(this);
         $.ajax({
             type: 'DELETE',
@@ -56,6 +43,30 @@ $(function(){
             success: function() { $this.parents('tr').fadeOut(); }
         });
     });
+
+    // Edit a record when clicked on
+    function setupEditables($page) {
+        $('#'+$page+'_table').find('.ed').editable({
+            type:   'text',
+            url:    '#',
+            params: {'table': $page, },
+            ajaxOptions: {
+                type: 'PUT',
+                dataType: 'json',
+            }
+        });
+        $('#'+$page+'_table').find('.dt').editable({
+            type:   'date',
+            format: 'yyyy-mm-dd',    
+            viewformat: 'DD, MM d, yyyy',
+        });
+    }
+
+    // $('table').on('click', '.editable-submit', function() {
+    //     $form = $(this);
+    //     console.log($form);
+    // });
+
 
     // add a record when the add button is pressed
     // $('.btn_add').click(function() {
@@ -68,15 +79,14 @@ $(function(){
     //     return false;
     // });
 
-    // clear the fields when the clear button is pressed
-    $('.btn_reset').click(function(){
-        $form = $(this).parents('form');
-        $form.find(':input').val('');
-        return false;
-    });
 
     // Setup for the page
-    $('.btn_del').css('display', 'none');
+    $('.btn_del').hide();
     $.fn.editable.defaults.mode = 'inline';   // Make in-place editing work in inline mode
-    setup_editables();
+    setupEditables('dates');
+    setupEditables('item');
+    setupEditables('vendor');
+    setupEditables('account');
+    setupEditables('user');
 });
+

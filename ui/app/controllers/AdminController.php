@@ -20,7 +20,17 @@ class AdminController extends BaseController
 
     public function update()
     {
-        
+        $pk = Input::get('pk');
+        $field = Input::get('name');
+        $value = Input::get('value');
+        $table = Input::get('table');
+
+        if (!$pk or !$field or !$table)
+            App::abort(500, 'primary key, field, and table must be entered');
+
+        // Write the record to the database
+        // $this->
+        return Response::make('foo', 200);
     }
 
     public function destroy()

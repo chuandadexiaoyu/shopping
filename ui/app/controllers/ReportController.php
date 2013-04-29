@@ -7,7 +7,7 @@ class ReportController extends BaseController
         $date = $this->getApi('dates/next');
 
         if($date) {
-            $date = date_create($date)->format('l, F j, Y');
+            $date = DateFormatter::long($date);
         }
 
         return View::make('user/report')
