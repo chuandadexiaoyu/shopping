@@ -46,16 +46,18 @@ $(function()
 
     // Edit a record when clicked on
     function setupEditables($page) {
-        $('#'+$page+'_table').find('.ed').editable({
+        $tableName = '#'+$page+'_table';
+        $table = $($tableName);
+        $table.find('.ed').editable({
             type:   'text',
             url:    '#',
-            params: {'table': $page, },
+            params: {'table': $tableName, },
             ajaxOptions: {
                 type: 'PUT',
-                dataType: 'json',
+                // dataType: 'json',
             }
         });
-        $('#'+$page+'_table').find('.dt').editable({
+        $table.find('.dt').editable({
             type:   'date',
             format: 'yyyy-mm-dd',    
             viewformat: 'DD, MM d, yyyy',

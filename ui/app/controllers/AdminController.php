@@ -22,15 +22,16 @@ class AdminController extends BaseController
     {
         $pk = Input::get('pk');
         $field = Input::get('name');
-        $value = Input::get('value');
         $table = Input::get('table');
+        $value = Input::get('value');
 
         if (!$pk or !$field or !$table)
             App::abort(500, 'primary key, field, and table must be entered');
 
+        $resourceName = $this->getResourceName($table);
+
         // Write the record to the database
-        // $this->
-        return Response::make('foo', 200);
+        // $this->putApi($resourceName, $id, Input::data());
     }
 
     public function destroy()
@@ -39,23 +40,27 @@ class AdminController extends BaseController
         $id     = $json->get('id');
         $table  = $json->get('table');
 
-        // send to a different controller, based on the table
-        if ($table == 'dates_table') {
-            $page = 'dates';
-        } elseif ($table == 'item_table') {
-            $page = 'items';
-        } elseif ($table == 'vendor_table') {
-            $page = 'vendors';
-        } elseif ($table == 'account_table') {
-            $page = 'accounts';
-        } elseif ($table == 'user_table') {
-            $page = 'users';
-        } else {
-            App::abort(500, 'invalid table selected');
-        }
-
-        $this->deleteApi($page, $id);
+        $resourceName = $this->getResourceName($table);
+        $this->deleteApi($resourceName, $id);
         return;
+    }
+
+    private function getResourceName($tableName)
+    {
+        // get the name of each resource, based on the table name
+        if ($tableName == 'dates_table') {
+            return 'dates';
+        } elseif ($tableName == 'item_table') {
+            return 'items';
+        } elseif ($tableName == 'vendor_table') {
+            return 'vendors';
+        } elseif ($tableName == 'account_table') {
+            return 'accounts';
+        } elseif ($tableName == 'user_table') {
+            return 'users';
+        } else {
+            App::abort(500, 'invalid table selected ('.$tableName.')');
+        }
     }
 
 }

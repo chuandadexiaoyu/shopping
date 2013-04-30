@@ -217,7 +217,6 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
             .done($.proxy(function(response) {
                 //run success callback
                 var res = typeof this.options.success === 'function' ? this.options.success.call(this.options.scope, response, newValue) : null;
-                
                 //if success callback returns false --> keep form open and do not activate input
                 if(res === false) {
                     this.error(false);
@@ -291,8 +290,6 @@ Editableform is linked with one of input types, e.g. 'text', 'select' etc.
                     this.options.params = $.fn.editableutils.tryParseJson(this.options.params, true);   
                     $.extend(params, this.options.params);
                 }
-                // $joel = this;
-                // console.log($joel);
                 if(typeof this.options.url === 'function') { //user's function
                     return this.options.url.call(this.options.scope, params);
                 } else {  

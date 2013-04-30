@@ -20,4 +20,11 @@ class BaseController extends Controller
         $request = Requests::request($url.'/'.$page.'/'.$id, array(), array(), 'DELETE', array());
     }
 
+    protected function putApi($page, $id, $data)
+    {
+        // arrays for headers, data, options
+        $url = Config::get('app.api_url');
+        $request = Requests::request($url.'/'.$page.'/'.$id, array(), $data, 'PUT', array());
+    }
+
 }
